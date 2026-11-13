@@ -327,10 +327,9 @@ input[type=range]{padding:0;accent-color:var(--orange)}
 <script>
 /* =====================================================================
    1. DONNÉES — Catégories & recettes
-   price = coût estimé en € pour 1 portion (aliments de supermarché standard)
    ===================================================================== */
 const CATS = {
-  breakfast: { label: "Petit-déj",       emoji: "🍳" },
+  breakfast: { label: "Petit-déj express", emoji: "⏱️" },
   salty:     { label: "Repas salés",     emoji: "🍗" },
   gainer:    { label: "Gainers maison",  emoji: "🥤" },
   dessert:   { label: "Desserts",        emoji: "🍰" },
@@ -338,136 +337,247 @@ const CATS = {
   whey:      { label: "Whey / shakers",  emoji: "💪" }
 };
 
-const R = (id, cat, name, emoji, kcal, p, c, f, time, price, ingredients, steps) =>
-  ({ id, cat, name, emoji, kcal, p, c, f, time, price, ingredients, steps });
+/* ---------- Catalogue d'ingrédients ----------
+   u : g | ml | pc | tranche | qs (quantité selon besoin)
+   m : [kcal, prot, gluc, lip] pour 100 g/ml, ou par pièce/tranche
+   price : CHF par g/ml ou par pièce (prix moyens Migros/Coop, gammes budget)
+   ray : rayon du magasin pour la liste de courses */
+const RAYONS = {
+  frais:  "🥛 Produits laitiers & œufs",
+  viande: "🥩 Viande & saumon",
+  pain:   "🍞 Boulangerie",
+  epic:   "🌾 Épicerie",
+  fruits: "🍎 Fruits & légumes",
+  surg:   "❄️ Surgelés",
+  compl:  "💪 Compléments",
+  cond:   "🧂 Condiments & épices"
+};
+const ING = {};
+const I = (key, n, u, m, price, ray) => (ING[key] = { n, u, m, price, ray });
+I("avoine","Flocons d'avoine","g",[370,13,60,7],0.002,"epic");
+I("lait","Lait entier","ml",[65,3.3,4.8,3.6],0.0016,"frais");
+I("whey","Whey protéine","g",[380,78,8,6],0.035,"compl");
+I("pb","Beurre de cacahuète","g",[600,25,15,50],0.011,"epic");
+I("banane","Banane","pc",[105,1.3,27,0.4],0.40,"fruits");
+I("pomme","Pomme","pc",[80,0.4,19,0.2],0.50,"fruits");
+I("oeuf","Œufs","pc",[75,6.5,0.5,5],0.55,"frais");
+I("painComplet","Pain complet","tranche",[100,4,17,1.5],0.20,"pain");
+I("painMie","Pain de mie","tranche",[70,2.3,12,1.2],0.12,"pain");
+I("baguette","Demi-baguette","pc",[330,11,65,2],0.80,"pain");
+I("tortilla","Tortillas (wraps)","pc",[180,5,30,4.5],0.40,"pain");
+I("emmental","Emmental / gruyère râpé","g",[380,28,0,30],0.02,"frais");
+I("parmesan","Parmesan","g",[400,33,0,29],0.03,"frais");
+I("skyr","Skyr nature","g",[63,11,4,0.2],0.006,"frais");
+I("sere","Séré maigre","g",[68,12,4,0.3],0.004,"frais");
+I("yaourtGrec","Yaourt grec","g",[130,6,4,10],0.007,"frais");
+I("cottage","Cottage cheese","g",[100,12,3,4.5],0.009,"frais");
+I("beurre","Beurre","g",[740,0.7,0.6,82],0.013,"frais");
+I("proteinDrink","Boisson lactée protéinée (bouteille)","pc",[200,25,15,3],2.40,"frais");
+I("avocat","Avocat","pc",[240,3,13,22],1.50,"fruits");
+I("crudites","Crudités (salade, tomate)","g",[20,1,3,0.2],0.008,"fruits");
+I("oignon","Oignon","pc",[40,1,9,0],0.30,"fruits");
+I("pateDouce","Patate douce","g",[86,1.6,20,0.1],0.004,"fruits");
+I("pdt","Pommes de terre","g",[77,2,17,0.1],0.0018,"fruits");
+I("granola","Granola","g",[450,9,63,17],0.008,"epic");
+I("miel","Miel","g",[320,0.3,80,0],0.012,"epic");
+I("noix","Mélange de noix","g",[610,18,15,52],0.02,"epic");
+I("raisins","Raisins secs","g",[300,3,70,0.5],0.008,"epic");
+I("riz","Riz","g",[350,7,78,0.6],0.0025,"epic");
+I("rizRond","Riz rond (dessert)","g",[350,7,78,0.6],0.003,"epic");
+I("pates","Pâtes","g",[355,12.5,71,1.5],0.002,"epic");
+I("lentilles","Lentilles corail","g",[340,24,50,1.5],0.005,"epic");
+I("haricots","Haricots rouges (boîte)","g",[110,8,15,0.5],0.005,"epic");
+I("tomatesConc","Tomates concassées (boîte)","g",[22,1,3.5,0.2],0.0025,"epic");
+I("sauceTomate","Sauce tomate","g",[45,1.5,7,1],0.003,"epic");
+I("mais","Maïs (boîte)","g",[80,2.5,15,1.2],0.006,"epic");
+I("huile","Huile d'olive","ml",[820,0,0,92],0.009,"epic");
+I("mayo","Mayonnaise","g",[700,1,1,76],0.008,"epic");
+I("soja","Sauce soja","ml",[55,8,5,0],0.01,"epic");
+I("pateTart","Pâte à tartiner","g",[540,6,57,31],0.009,"epic");
+I("confiture","Confiture","g",[250,0.4,60,0],0.006,"epic");
+I("cacao","Poudre chocolatée","g",[380,5,80,3],0.009,"epic");
+I("chocolat","Chocolat noir","g",[550,7,45,38],0.012,"epic");
+I("chia","Graines de chia","g",[490,17,42,31],0.02,"epic");
+I("sucre","Sucre","g",[400,0,100,0],0.0012,"epic");
+I("espresso","Café (expresso)","pc",[2,0,0,0],0.30,"epic");
+I("poulet","Blanc de poulet","g",[110,23,0,1.5],0.02,"viande");
+I("pouletCuit","Poulet cuit émincé","g",[140,24,1,4],0.035,"viande");
+I("boeuf","Bœuf haché 15%","g",[215,18.5,0,15.5],0.018,"viande");
+I("jambon","Jambon","g",[110,19,1,3.5],0.025,"viande");
+I("lardons","Lardons","g",[290,15,0.5,25],0.022,"viande");
+I("cervelas","Cervelas","pc",[250,11,2,22],1.10,"viande");
+I("saumon","Pavé de saumon","g",[200,20,0,13],0.045,"viande");
+I("legumes","Légumes surgelés","g",[45,2.5,7,0.5],0.004,"surg");
+I("petitsPois","Petits pois surgelés","g",[80,5.5,12,0.5],0.004,"surg");
+I("fruitsRouges","Fruits rouges surgelés","g",[45,1,8,0.3],0.009,"surg");
+I("eau","Eau","ml",[0,0,0,0],0,null);
+I("epices","Sel, poivre, épices","qs",[0,0,0,0],0,"cond");
 
-const RECIPES = [
-  // ---------- PETIT-DÉJEUNER ----------
-  R("b1","breakfast","Overnight oats whey & cacahuète","🥣",870,52,100,28,5,2.2,
-    ["80 g flocons d'avoine","250 ml lait entier","30 g whey (vanille ou choco)","20 g beurre de cacahuète","1 banane"],
-    ["Mélange avoine, whey et lait dans un bocal.","Ajoute le beurre de cacahuète et remue.","Laisse une nuit au frigo.","Le matin, ajoute la banane en rondelles."]),
-  R("b2","breakfast","Omelette 4 œufs fromage + tartines","🍳",720,42,32,46,10,2.0,
-    ["4 œufs","40 g emmental râpé","2 tranches pain complet","10 g beurre"],
-    ["Bats les œufs avec sel et poivre.","Fais fondre le beurre dans une poêle, verse les œufs.","Ajoute le fromage, plie l'omelette quand elle prend.","Sers avec le pain grillé."]),
-  R("b3","breakfast","Toasts œufs & avocat","🥑",680,26,40,46,10,2.5,
-    ["3 œufs","1 avocat","2 tranches pain complet","Sel, poivre, citron"],
-    ["Fais griller le pain.","Écrase l'avocat avec sel, poivre et un filet de citron.","Fais cuire les œufs au plat ou brouillés.","Tartine l'avocat et pose les œufs dessus."]),
-  R("b4","breakfast","Pancakes protéinés banane","🥞",650,45,85,14,15,1.9,
-    ["60 g flocons d'avoine mixés","2 œufs","1 banane","30 g whey","20 g miel"],
-    ["Mixe avoine, œufs, banane et whey.","Fais cuire des petites louches dans une poêle huilée, 2 min par face.","Empile et arrose de miel."]),
-  R("b5","breakfast","Bol skyr, granola & miel","🍯",620,40,75,16,3,2.3,
-    ["300 g skyr nature","60 g granola","20 g miel","15 g noix"],
-    ["Verse le skyr dans un bol.","Ajoute le granola et les noix.","Arrose de miel."]),
-  R("b6","breakfast","Porridge lait entier & beurre de cacahuète","🥣",820,33,102,31,7,1.3,
-    ["100 g flocons d'avoine","300 ml lait entier","25 g beurre de cacahuète","15 g miel"],
-    ["Chauffe avoine et lait 4-5 min en remuant.","Hors du feu, incorpore le beurre de cacahuète.","Ajoute le miel."]),
-  R("b7","breakfast","Tartines PB banane + verre de lait","🍌",830,33,100,33,3,1.4,
-    ["3 tranches pain complet","40 g beurre de cacahuète","1 banane","250 ml lait entier"],
-    ["Tartine le beurre de cacahuète sur le pain.","Ajoute la banane en rondelles.","Accompagne d'un grand verre de lait."]),
+const UNIT_LBL = { g: "g", ml: "ml", pc: "×", tranche: "tranche" };
+function ingText(key, q, note) {
+  const it = ING[key];
+  let s;
+  if (it.u === "qs") s = it.n;
+  else if (it.u === "pc") s = `${q} × ${it.n}`;
+  else if (it.u === "tranche") s = `${q} tranche${q > 1 ? "s" : ""} · ${it.n}`;
+  else s = `${q} ${it.u} · ${it.n}`;
+  return note ? `${s} (${note})` : s;
+}
 
-  // ---------- REPAS SALÉS ----------
-  R("s1","salty","Riz, poulet & huile d'olive","🍗",850,52,95,22,25,3.2,
-    ["120 g riz (cru)","180 g blanc de poulet","15 ml huile d'olive","Légumes surgelés (poignée)","Épices au choix"],
-    ["Fais cuire le riz.","Coupe le poulet en dés, saisis-le 6-8 min à la poêle avec épices.","Ajoute les légumes 3 min.","Sers sur le riz et arrose d'huile d'olive."]),
-  R("s2","salty","Pâtes bolognaise bœuf haché","🍝",950,55,95,35,20,3.0,
-    ["120 g pâtes (crues)","150 g bœuf haché 15%","150 g sauce tomate","20 g parmesan"],
-    ["Fais cuire les pâtes.","Fais dorer le bœuf haché, ajoute la sauce tomate, laisse mijoter 5 min.","Mélange avec les pâtes et ajoute le parmesan."]),
-  R("s3","salty","Wraps thon-mayo fromage","🌯",720,48,58,32,5,2.4,
-    ["2 tortillas","1 boîte de thon (140 g égoutté)","20 g mayonnaise","50 g maïs","30 g fromage râpé"],
-    ["Mélange thon, mayo et maïs.","Étale sur les tortillas, ajoute le fromage.","Roule et passe 1 min à la poêle (optionnel)."]),
-  R("s4","salty","Patate douce, steak haché & œuf","🥩",780,45,62,36,25,3.3,
-    ["300 g patate douce","1 steak haché 15% (150 g)","1 œuf","Sel, paprika"],
-    ["Coupe la patate douce en cubes, 20 min au four à 200 °C (ou 8 min micro-ondes).","Cuis le steak à la poêle.","Fais un œuf au plat et sers le tout."]),
-  R("s5","salty","Riz cantonais œufs & jambon","🍚",810,40,98,25,20,2.0,
-    ["120 g riz (cru)","3 œufs","80 g jambon en dés","80 g petits pois","10 ml huile","Sauce soja"],
-    ["Cuis le riz (idéalement la veille).","Brouille les œufs à la poêle huilée, réserve.","Saute riz, jambon et petits pois 4 min.","Ajoute les œufs et un trait de sauce soja."]),
-  R("s6","salty","Chili con carne express","🌶️",880,52,105,24,30,2.8,
-    ["150 g bœuf haché","120 g haricots rouges (boîte)","200 g tomates concassées","100 g riz (cru)","Cumin, paprika"],
-    ["Cuis le riz.","Fais revenir le bœuf avec les épices.","Ajoute tomates et haricots, laisse mijoter 15 min.","Sers sur le riz."]),
-  R("s7","salty","Croque-monsieur x2","🥪",760,42,60,38,10,2.2,
-    ["4 tranches pain de mie","2 tranches jambon","60 g emmental","10 g beurre"],
-    ["Beurre l'extérieur du pain.","Garnis de jambon et fromage.","Dore 3 min par face à la poêle ou au four."]),
-  R("s8","salty","Lentilles corail & saucisses","🍲",820,45,65,40,25,2.3,
-    ["100 g lentilles corail","2 saucisses de Toulouse","1 oignon","Épices (cumin, curry)"],
-    ["Fais revenir l'oignon émincé.","Ajoute les lentilles et 3x leur volume d'eau, 15 min.","Cuis les saucisses à la poêle en parallèle.","Sers ensemble."]),
-  R("s9","salty","Pommes de terre, œufs & lardons","🥔",880,38,65,50,25,2.0,
-    ["350 g pommes de terre","3 œufs","80 g lardons","10 ml huile"],
-    ["Coupe les pommes de terre en dés, fais-les sauter 15 min dans l'huile.","Ajoute les lardons 5 min.","Casse les œufs dessus, couvre 3 min."]),
-  R("s10","salty","Demi-baguette poulet fromage","🥖",780,50,80,26,5,3.0,
-    ["1/2 baguette","120 g poulet cuit (tranches)","30 g fromage","15 g mayonnaise","Salade, tomate"],
-    ["Ouvre la baguette et tartine la mayo.","Garnis de poulet, fromage, salade et tomate.","Referme et c'est prêt."]),
-  R("s11","salty","Saumon, riz & avocat (poke simple)","🍣",900,45,90,38,20,4.5,
-    ["120 g riz (cru)","130 g pavé de saumon","1/2 avocat","Sauce soja, sésame"],
-    ["Cuis le riz.","Cuis le saumon 4 min par face à la poêle.","Dispose riz, saumon émietté et avocat en tranches.","Assaisonne de soja et sésame."]),
+/* Recette : macros et prix calculés automatiquement depuis le catalogue */
+const RECIPES = [];
+function R(id, cat, name, emoji, time, ings, steps) {
+  let kcal = 0, p = 0, c = 0, f = 0, price = 0;
+  for (const [key, q] of ings) {
+    const it = ING[key]; if (!it) throw new Error("Ingrédient inconnu : " + key);
+    if (it.u === "qs") continue;
+    const mult = (it.u === "g" || it.u === "ml") ? q / 100 : q;
+    kcal += it.m[0] * mult; p += it.m[1] * mult; c += it.m[2] * mult; f += it.m[3] * mult;
+    price += it.price * q;
+  }
+  RECIPES.push({ id, cat, name, emoji, time, steps, ings,
+    ingredients: ings.map(([k, q, n]) => ingText(k, q, n)),
+    kcal: Math.round(kcal / 10) * 10, p: Math.round(p), c: Math.round(c), f: Math.round(f),
+    price: Math.max(0.1, Math.round(price * 20) / 20) });
+}
 
-  // ---------- GAINERS MAISON ----------
-  R("g1","gainer","Gainer classique avoine-banane-PB","🥤",1080,62,112,42,3,2.3,
-    ["80 g flocons d'avoine","1 banane","30 g beurre de cacahuète","400 ml lait entier","30 g whey"],
-    ["Mixe d'abord l'avoine à sec en poudre.","Ajoute tous les autres ingrédients.","Mixe 30 secondes et bois."]),
-  R("g2","gainer","Gainer chocolat-noisette","🍫",950,55,110,32,3,2.4,
-    ["400 ml lait entier","30 g whey chocolat","50 g flocons d'avoine","20 g pâte à tartiner","1 banane"],
-    ["Mets tout dans le blender.","Mixe 30-45 secondes.","Ajoute des glaçons si tu le veux frais."]),
-  R("g3","gainer","Gainer fruits rouges & skyr","🍓",720,45,95,16,3,2.6,
-    ["200 g skyr","150 g fruits rouges surgelés","300 ml lait entier","50 g flocons d'avoine","20 g miel"],
-    ["Mixe l'avoine en poudre.","Ajoute le reste.","Mixe jusqu'à texture lisse."]),
-  R("g4","gainer","Gainer café moka","☕",780,50,80,28,3,2.0,
-    ["300 ml lait entier","1 expresso refroidi","30 g whey","50 g flocons d'avoine","20 g beurre de cacahuète","15 g miel"],
-    ["Prépare et refroidis l'expresso.","Mixe tout avec quelques glaçons.","Idéal le matin ou avant la séance."]),
-  R("g5","gainer","Gainer budget (sans whey)","💸",1070,38,140,42,3,1.5,
-    ["500 ml lait entier","80 g flocons d'avoine","1 banane","30 g beurre de cacahuète","25 g miel"],
-    ["Mixe l'avoine en poudre.","Ajoute le reste et mixe.","Le plus rentable en calories par euro !"]),
+// ---------- PETIT-DÉJ EXPRESS (≤ 3 min le matin, à emporter) ----------
+R("b1","breakfast","Shaker petit-déj avoine-whey","🥤",2,
+  [["lait",300],["whey",30],["avoine",40,"instantanés ou mixés"]],
+  ["Verse le lait dans le shaker.","Ajoute la whey et l'avoine.","Secoue 20 secondes, tu le bois en route."]);
+R("b2","breakfast","Overnight oats (prêts la veille)","🥣",2,
+  [["avoine",50],["lait",200],["whey",25],["pb",15],["miel",10]],
+  ["Le soir : mélange tout dans un bocal.","Ferme et mets au frigo.","Le matin : tu prends le bocal et une cuillère, c'est tout."]);
+R("b3","breakfast","Birchermüesli express","🍏",3,
+  [["avoine",50],["sere",150],["lait",100],["pomme",1,"râpée"],["miel",10]],
+  ["Mélange avoine, séré et lait (idéalement la veille).","Râpe la pomme dedans.","Ajoute le miel et emporte."]);
+R("b4","breakfast","Banane + boisson protéinée","🍌",1,
+  [["proteinDrink",1],["banane",1]],
+  ["Prends une bouteille de boisson protéinée au frigo.","Prends une banane.","Zéro préparation : idéal quand tu n'as pas faim."]);
+R("b5","breakfast","Tartine PB-banane à emporter","🍞",2,
+  [["painComplet",2],["pb",25],["banane",1]],
+  ["Tartine le beurre de cacahuète.","Ajoute la banane en rondelles.","Referme en sandwich et emporte."]);
+R("b6","breakfast","Mini-bol skyr, granola & miel","🍯",2,
+  [["skyr",200],["granola",40],["miel",10]],
+  ["Verse le skyr dans un pot.","Ajoute le granola et le miel.","Se mange en 2 minutes."]);
+R("b7","breakfast","Smoothie banane-lait-cacahuète","🥛",3,
+  [["lait",300],["banane",1],["pb",20],["miel",10]],
+  ["Mets tout dans le blender.","Mixe 20 secondes.","Verse dans une gourde et bois en route."]);
+R("b8","breakfast","Lait chocolaté protéiné","🍫",1,
+  [["lait",300],["whey",25,"chocolat"],["cacao",10]],
+  ["Verse le lait dans le shaker.","Ajoute whey et poudre chocolatée.","Secoue et bois."]);
 
-  // ---------- DESSERTS ----------
-  R("d1","dessert","Riz au lait maison","🍮",720,22,120,18,30,1.0,
-    ["80 g riz rond","500 ml lait entier","30 g sucre","Vanille ou cannelle"],
-    ["Porte le lait à frémissement avec la vanille.","Ajoute le riz, cuis 25 min à feu doux en remuant.","Ajoute le sucre en fin de cuisson."]),
-  R("d2","dessert","Fromage blanc, banane & chocolat","🍫",450,22,55,15,3,1.4,
-    ["250 g fromage blanc","1 banane","20 g chocolat noir"],
-    ["Verse le fromage blanc dans un bol.","Ajoute la banane en rondelles.","Râpe ou concasse le chocolat dessus."]),
-  R("d3","dessert","Mug cake protéiné","🧁",420,35,32,16,5,1.2,
-    ["30 g whey","30 g flocons d'avoine mixés","1 œuf","15 g beurre de cacahuète","30 ml lait"],
-    ["Mélange tout dans un grand mug.","Micro-ondes 60-90 secondes.","Laisse tiédir 1 min."]),
-  R("d4","dessert","Pudding chia au lait","🥄",480,16,45,26,5,1.5,
-    ["40 g graines de chia","250 ml lait entier","15 g miel","Fruits au choix"],
-    ["Mélange chia, lait et miel.","Remue après 5 min puis laisse une nuit au frais.","Ajoute les fruits au moment de servir."]),
-  R("d5","dessert","Bananes poêlées, yaourt grec & PB","🍌",640,26,70,28,7,2.0,
-    ["2 bananes","20 g beurre de cacahuète","200 g yaourt grec","Cannelle"],
-    ["Coupe les bananes en rondelles, poêle-les 3 min.","Verse sur le yaourt grec.","Ajoute le beurre de cacahuète et la cannelle."]),
+// ---------- REPAS SALÉS ----------
+R("s1","salty","Riz, poulet & huile d'olive","🍗",25,
+  [["riz",120,"cru"],["poulet",180],["huile",15],["legumes",150],["epices"]],
+  ["Fais cuire le riz.","Coupe le poulet en dés et saisis-le 6-8 min avec les épices.","Ajoute les légumes 3 min.","Sers sur le riz et arrose d'huile d'olive."]);
+R("s2","salty","Pâtes bolognaise bœuf haché","🍝",20,
+  [["pates",120,"crues"],["boeuf",150],["sauceTomate",150],["parmesan",20]],
+  ["Fais cuire les pâtes.","Fais dorer le bœuf, ajoute la sauce tomate, 5 min.","Mélange avec les pâtes et ajoute le parmesan."]);
+R("s3","salty","Wraps poulet-fromage-maïs","🌯",5,
+  [["tortilla",2],["pouletCuit",120],["mayo",20],["mais",50],["emmental",30]],
+  ["Mélange poulet, mayo et maïs.","Étale sur les tortillas, ajoute le fromage.","Roule et passe 1 min à la poêle (optionnel)."]);
+R("s4","salty","Patate douce, bœuf haché & œuf","🥩",25,
+  [["pateDouce",300],["boeuf",150],["oeuf",1],["epices"]],
+  ["Patate douce en cubes : 20 min au four à 200 °C (ou 8 min au micro-ondes).","Cuis le bœuf haché à la poêle.","Fais un œuf au plat et sers le tout."]);
+R("s5","salty","Riz cantonais œufs & jambon","🍚",20,
+  [["riz",120,"cru"],["oeuf",3],["jambon",80],["petitsPois",80],["huile",10],["soja",10]],
+  ["Cuis le riz (idéalement la veille).","Brouille les œufs à la poêle, réserve.","Saute riz, jambon et petits pois 4 min.","Ajoute les œufs et la sauce soja."]);
+R("s6","salty","Chili con carne express","🌶️",30,
+  [["boeuf",150],["haricots",120],["tomatesConc",200],["riz",100,"cru"],["oignon",1],["epices"]],
+  ["Cuis le riz.","Fais revenir l'oignon et le bœuf avec cumin et paprika.","Ajoute tomates et haricots, 15 min à feu doux.","Sers sur le riz."]);
+R("s7","salty","Croque-monsieur x2","🥪",10,
+  [["painMie",4],["jambon",80],["emmental",60],["beurre",10]],
+  ["Beurre l'extérieur du pain.","Garnis de jambon et de fromage.","Dore 3 min par face à la poêle ou au four."]);
+R("s8","salty","Lentilles corail & cervelas","🍲",25,
+  [["lentilles",100],["cervelas",1],["oignon",1],["huile",10],["epices"]],
+  ["Fais revenir l'oignon dans l'huile.","Ajoute les lentilles et 3 fois leur volume d'eau, 15 min.","Grille le cervelas en parallèle.","Sers ensemble."]);
+R("s9","salty","Pommes de terre, œufs au plat & lardons","🥔",25,
+  [["pdt",350],["oeuf",3],["lardons",80],["huile",10]],
+  ["Coupe les pommes de terre en dés, fais-les sauter 15 min.","Ajoute les lardons 5 min.","Casse les œufs dessus et couvre 3 min."]);
+R("s10","salty","Demi-baguette poulet fromage","🥖",5,
+  [["baguette",1],["pouletCuit",120],["emmental",30],["mayo",15],["crudites",50]],
+  ["Ouvre la baguette et tartine la mayo.","Garnis de poulet, fromage et crudités.","Referme, c'est prêt."]);
+R("s11","salty","Bol saumon, riz & avocat","🍣",20,
+  [["riz",120,"cru"],["saumon",130],["avocat",0.5],["soja",10]],
+  ["Cuis le riz.","Cuis le saumon 4 min par face à la poêle.","Dispose riz, saumon émietté et avocat.","Assaisonne de sauce soja."]);
+R("s12","salty","Omelette fromage + tartines","🍳",10,
+  [["oeuf",4],["emmental",40],["painComplet",2],["beurre",10]],
+  ["Bats les œufs avec sel et poivre.","Verse dans la poêle beurrée, ajoute le fromage.","Plie quand elle prend et sers avec le pain."]);
+R("s13","salty","Toasts œufs brouillés & avocat","🥑",10,
+  [["oeuf",3],["avocat",1],["painComplet",2],["epices"]],
+  ["Fais griller le pain.","Écrase l'avocat avec sel et poivre.","Fais des œufs brouillés et pose-les sur les toasts."]);
 
-  // ---------- COLLATIONS ----------
-  R("n1","snack","Mix noix & raisins secs","🥜",520,14,40,35,1,1.5,
-    ["60 g mélange de noix","40 g raisins secs"],
-    ["Prépare un sachet à l'avance.","À grignoter dans la journée."]),
-  R("n2","snack","4 œufs durs + tranche de pain","🥚",400,28,15,24,12,1.0,
-    ["4 œufs","1 tranche pain complet","Sel"],
-    ["Plonge les œufs 10 min dans l'eau bouillante.","Refroidis à l'eau froide et écale.","Prépare-en plusieurs pour la semaine."]),
-  R("n3","snack","Tartines cottage cheese & jambon","🍞",480,40,38,16,3,2.0,
-    ["200 g cottage cheese","2 tranches pain complet","2 tranches jambon"],
-    ["Toaste le pain.","Étale le cottage cheese.","Ajoute le jambon et du poivre."]),
-  R("n4","snack","Barres maison avoine-PB-miel (x2)","🍫",520,24,58,21,10,1.0,
-    ["60 g flocons d'avoine","30 g beurre de cacahuète","20 g miel","15 g whey"],
-    ["Chauffe légèrement PB et miel pour les fluidifier.","Mélange avec l'avoine et la whey.","Tasse dans un moule, 1 h au frigo, coupe en 2 barres."]),
-  R("n5","snack","Grand lait chocolaté + banane","🥛",560,19,78,19,1,1.2,
-    ["500 ml lait entier","20 g cacao en poudre sucré","1 banane"],
-    ["Mélange le cacao dans le lait.","Bois avec la banane."]),
-  R("n6","snack","Sandwich beurre de cacahuète-confiture","🥪",560,18,70,24,2,0.8,
-    ["2 tranches pain complet","30 g beurre de cacahuète","20 g confiture"],
-    ["Tartine une tranche de beurre de cacahuète.","L'autre de confiture.","Assemble. Facile à emporter."]),
+// ---------- GAINERS MAISON ----------
+R("g1","gainer","Gainer classique avoine-banane-PB","🥤",3,
+  [["avoine",80],["banane",1],["pb",30],["lait",400],["whey",30]],
+  ["Mixe d'abord l'avoine à sec en poudre.","Ajoute tout le reste.","Mixe 30 secondes et bois."]);
+R("g2","gainer","Gainer chocolat-noisette","🍫",3,
+  [["lait",400],["whey",30,"chocolat"],["avoine",50],["pateTart",20],["banane",1]],
+  ["Mets tout dans le blender.","Mixe 30-45 secondes.","Ajoute des glaçons si tu le veux frais."]);
+R("g3","gainer","Gainer fruits rouges & skyr","🍓",3,
+  [["skyr",200],["fruitsRouges",150],["lait",300],["avoine",50],["miel",20]],
+  ["Mixe l'avoine en poudre.","Ajoute le reste.","Mixe jusqu'à texture lisse."]);
+R("g4","gainer","Gainer café moka","☕",3,
+  [["lait",300],["espresso",1,"refroidi"],["whey",30],["avoine",50],["pb",20],["miel",15]],
+  ["Prépare et refroidis l'expresso.","Mixe tout avec quelques glaçons.","Bois-le dans la journée ou avant la séance."]);
+R("g5","gainer","Gainer budget (sans whey)","💸",3,
+  [["lait",500],["avoine",80],["banane",1],["pb",30],["miel",25]],
+  ["Mixe l'avoine en poudre.","Ajoute le reste et mixe.","Le plus rentable en calories par franc !"]);
 
-  // ---------- WHEY / SHAKERS ----------
-  R("w1","whey","Shaker whey à l'eau","💧",120,24,3,2,1,1.0,
-    ["30 g whey","300 ml eau froide"],
-    ["Verse l'eau puis la whey dans le shaker.","Secoue 15 secondes."]),
-  R("w2","whey","Shaker whey au lait entier","🥛",310,34,17,12,1,1.4,
-    ["30 g whey","300 ml lait entier"],
-    ["Verse le lait puis la whey.","Secoue 15 secondes."]),
-  R("w3","whey","Double whey + avoine instantanée","💪",560,53,50,16,2,2.1,
-    ["45 g whey","400 ml lait entier","40 g avoine instantanée (en poudre)"],
-    ["Mets tout dans un grand shaker.","Secoue énergiquement 30 secondes."]),
-  R("w4","whey","Shaker whey + skyr","🥄",390,52,22,9,2,2.0,
-    ["30 g whey","150 g skyr","250 ml lait entier"],
-    ["Mixe ou secoue fort dans un shaker à boule.","Bois frais."])
-];
+// ---------- DESSERTS ----------
+R("d1","dessert","Riz au lait maison","🍮",30,
+  [["rizRond",80],["lait",500],["sucre",30]],
+  ["Porte le lait à frémissement (vanille ou cannelle si tu veux).","Ajoute le riz, 25 min à feu doux en remuant.","Ajoute le sucre en fin de cuisson."]);
+R("d2","dessert","Séré, banane & chocolat","🍫",3,
+  [["sere",250],["banane",1],["chocolat",20]],
+  ["Verse le séré dans un bol.","Ajoute la banane en rondelles.","Concasse le chocolat dessus."]);
+R("d3","dessert","Mug cake protéiné","🧁",5,
+  [["whey",30],["avoine",30,"mixés"],["oeuf",1],["pb",15],["lait",30]],
+  ["Mélange tout dans un grand mug.","Micro-ondes 60-90 secondes.","Laisse tiédir 1 min."]);
+R("d4","dessert","Pudding chia au lait","🥄",5,
+  [["chia",40],["lait",250],["miel",15],["fruitsRouges",80]],
+  ["Mélange chia, lait et miel.","Remue après 5 min puis laisse une nuit au frais.","Ajoute les fruits au moment de servir."]);
+R("d5","dessert","Bananes poêlées, yaourt grec & PB","🍌",7,
+  [["banane",2],["pb",20],["yaourtGrec",200]],
+  ["Poêle les bananes en rondelles 3 min.","Verse sur le yaourt grec.","Ajoute le beurre de cacahuète."]);
+R("d6","dessert","Pancakes protéinés (week-end)","🥞",15,
+  [["avoine",60,"mixés"],["oeuf",2],["banane",1],["whey",30],["miel",20]],
+  ["Mixe avoine, œufs, banane et whey.","Cuis des petites louches 2 min par face.","Empile et arrose de miel."]);
+
+// ---------- COLLATIONS ----------
+R("n1","snack","Mix noix & raisins secs","🥜",1,
+  [["noix",60],["raisins",40]],
+  ["Prépare un sachet à l'avance.","À grignoter dans la journée."]);
+R("n2","snack","Wrap jambon-fromage","🌯",2,
+  [["tortilla",1],["jambon",60],["emmental",30]],
+  ["Garnis la tortilla de jambon et de fromage.","Roule serré.","Se mange froid ou 1 min à la poêle."]);
+R("n3","snack","Tartines cottage cheese & jambon","🍞",3,
+  [["cottage",200],["painComplet",2],["jambon",40]],
+  ["Toaste le pain.","Étale le cottage cheese.","Ajoute le jambon et du poivre."]);
+R("n4","snack","Barres maison avoine-PB-miel (x2)","🍫",10,
+  [["avoine",60],["pb",30],["miel",20],["whey",15]],
+  ["Chauffe légèrement PB et miel.","Mélange avec l'avoine et la whey.","Tasse dans un moule, 1 h au frigo, coupe en 2."]);
+R("n5","snack","Grand lait chocolaté + banane","🥛",1,
+  [["lait",500],["cacao",20],["banane",1]],
+  ["Mélange la poudre chocolatée dans le lait.","Bois avec la banane."]);
+R("n6","snack","Sandwich cacahuète-confiture","🥪",2,
+  [["painComplet",2],["pb",30],["confiture",20]],
+  ["Tartine une tranche de beurre de cacahuète.","L'autre de confiture.","Assemble : facile à emporter."]);
+
+// ---------- WHEY / SHAKERS ----------
+R("w1","whey","Shaker whey à l'eau","💧",1,
+  [["whey",30],["eau",300]],
+  ["Verse l'eau puis la whey.","Secoue 15 secondes."]);
+R("w2","whey","Shaker whey au lait entier","🥛",1,
+  [["whey",30],["lait",300]],
+  ["Verse le lait puis la whey.","Secoue 15 secondes."]);
+R("w3","whey","Double whey + avoine instantanée","💪",2,
+  [["whey",45],["lait",400],["avoine",40,"instantanés"]],
+  ["Mets tout dans un grand shaker.","Secoue énergiquement 30 secondes."]);
+R("w4","whey","Shaker whey + skyr","🥄",2,
+  [["whey",30],["skyr",150],["lait",250]],
+  ["Secoue fort dans un shaker à boule (ou mixe).","Bois frais."]);
 
 /* Base d'estimation photo : portions "normales" typiques */
 const FOOD_DB = [
@@ -475,7 +585,6 @@ const FOOD_DB = [
   { k:["boeuf","bœuf","steak","haché","hache"], n:"Bœuf (≈150 g)",    kcal:330, p:38 },
   { k:["porc","côtelette","cotelette"],    n:"Porc (≈150 g)",          kcal:340, p:36 },
   { k:["saumon"],                          n:"Saumon (≈130 g)",        kcal:270, p:28 },
-  { k:["thon"],                            n:"Thon (≈130 g)",          kcal:170, p:36 },
   { k:["poisson","cabillaud","colin"],     n:"Poisson blanc (≈150 g)", kcal:150, p:32 },
   { k:["jambon"],                          n:"Jambon (2 tranches)",    kcal:110, p:18 },
   { k:["saucisse","merguez","chipolata"],  n:"Saucisses (x2)",         kcal:420, p:22 },
@@ -496,6 +605,10 @@ const FOOD_DB = [
   { k:["sauce","mayo","mayonnaise","crème","creme"], n:"Sauce (≈30 g)", kcal:150, p:1 },
   { k:["huile","beurre"],                  n:"Matière grasse (1 c.s.)", kcal:110, p:0 },
   { k:["légume","legume","brocoli","haricots verts","courgette","carotte","salade","tomate"], n:"Légumes", kcal:60, p:3 },
+  { k:["cervelas"],                        n:"Cervelas",               kcal:250, p:11 },
+  { k:["rösti","rosti"],                   n:"Rösti (portion)",        kcal:450, p:8 },
+  { k:["raclette"],                        n:"Raclette (repas)",       kcal:950, p:40 },
+  { k:["fondue"],                          n:"Fondue (repas)",         kcal:1000, p:50 },
   { k:["pizza"],                           n:"Pizza (1 entière)",      kcal:850, p:35 },
   { k:["burger","hamburger"],              n:"Burger",                 kcal:600, p:30 },
   { k:["kebab","tacos"],                   n:"Kebab / tacos",          kcal:950, p:45 },
@@ -515,6 +628,7 @@ const DEFAULT_STATE = {
   plan: null     // [ {slot, id} ]
 };
 let state = load();
+if (state.plan && state.plan.some(x => !RECIPES.find(r => r.id === x.id))) state.plan = null;
 
 function load() {
   try {
@@ -653,7 +767,7 @@ function cardHTML(r) {
   return `<div class="rcp" data-rcp="${r.id}">
     <div class="t"><span class="e">${r.emoji}</span><span>${esc(r.name)}</span></div>
     <div class="macros"><span class="k">${r.kcal} kcal</span><span class="p">${r.p} g prot</span></div>
-    <div><span class="pill">${CATS[r.cat].emoji} ${CATS[r.cat].label}</span><span class="pill">⏱️ ${r.time} min</span><span class="pill g">💰 ${(r.p / r.price).toFixed(0)} g/€</span></div>
+    <div><span class="pill">${CATS[r.cat].emoji} ${CATS[r.cat].label}</span><span class="pill">⏱️ ${r.time} min</span><span class="pill g">💰 ${(r.p / r.price).toFixed(0)} g/CHF</span></div>
   </div>`;
 }
 
@@ -664,7 +778,7 @@ function openRecipe(id) {
       <h2 style="margin:0">${r.emoji} ${esc(r.name)}</h2>
       <button class="btn sm ghost" data-close>✕</button>
     </div>
-    <div style="margin:6px 0"><span class="pill">${CATS[r.cat].emoji} ${CATS[r.cat].label}</span><span class="pill">⏱️ ${r.time} min</span><span class="pill">≈ ${r.price.toFixed(2)} €</span><span class="pill g">💰 ${(r.p / r.price).toFixed(1)} g prot/€</span></div>
+    <div style="margin:6px 0"><span class="pill">${CATS[r.cat].emoji} ${CATS[r.cat].label}</span><span class="pill">⏱️ ${r.time} min</span><span class="pill">≈ ${r.price.toFixed(2)} CHF</span><span class="pill g">💰 ${(r.p / r.price).toFixed(1)} g prot/CHF</span></div>
     <div class="mgrid">
       <div><b style="color:var(--orange)">${r.kcal}</b><span class="muted">kcal</span></div>
       <div><b style="color:var(--green)">${r.p} g</b><span class="muted">prot.</span></div>
@@ -683,7 +797,7 @@ function addRecipe(id) { const r = byId(id); addEntry({ name: r.name, emoji: r.e
    8. GÉNÉRATEUR DE JOURNÉE
    ===================================================================== */
 const SLOT_DEFS = {
-  breakfast: { label: "Petit-déjeuner", cats: ["breakfast"] },
+  breakfast: { label: "Matin express", cats: ["breakfast"] },
   lunch:     { label: "Déjeuner",       cats: ["salty"] },
   snack:     { label: "Collation",      cats: ["snack"] },
   shake:     { label: "Shake gainer",   cats: ["gainer"] },
@@ -724,6 +838,7 @@ function generatePlan() {
     }
   }
   state.plan = bestSlots.map((s, i) => ({ slot: s, id: best[i], done: false }));
+  if (state.shop) state.shop.checked = {};
   save(); renderPlan();
 }
 
@@ -752,7 +867,7 @@ function renderPlan() {
     <div class="total">
       <div><b style="color:var(--orange)">${fmt(k)}</b><span class="muted">/ ${fmt(T.kcal)} kcal</span></div>
       <div><b style="color:var(--green)">${fmt(p)} g</b><span class="muted">/ ${T.prot} g prot</span></div>
-      <div><b>${price.toFixed(1)} €</b><span class="muted">coût estimé</span></div>
+      <div><b>${price.toFixed(2)} CHF</b><span class="muted">coût/jour</span></div>
     </div>
     ${items.map((x, i) => `
       <div class="slot" style="${x.done ? "opacity:.5" : ""}">
@@ -773,12 +888,61 @@ function renderPlan() {
     </div>`;
 }
 
+function shoppingItems(days) {
+  const tot = {};
+  for (const x of state.plan) {
+    const r = byId(x.id); if (!r) continue;
+    for (const [k, q] of r.ings) {
+      if (k === "eau") continue;
+      tot[k] = (tot[k] || 0) + (q || 0) * days;
+    }
+  }
+  return tot;
+}
+function fmtQty(it, q) {
+  if (it.u === "qs") return "";
+  if (it.u === "pc" || it.u === "tranche") { const n = Math.ceil(q - 1e-9); return it.u === "tranche" ? `${n} tranche${n > 1 ? "s" : ""}` : `${n}`; }
+  if (q >= 1000) return `${(Math.ceil(q / 100) / 10).toLocaleString("fr-CH")} ${it.u === "g" ? "kg" : "L"}`;
+  return `${Math.ceil(q / 10) * 10} ${it.u}`;
+}
 function showShopping() {
-  const items = state.plan.map(x => byId(x.id)).filter(Boolean);
+  const sh = state.shop || (state.shop = { days: 1, checked: {} });
+  const tot = shoppingItems(sh.days);
+  const groups = {};
+  let price = 0;
+  for (const [k, q] of Object.entries(tot)) {
+    const it = ING[k]; (groups[it.ray] = groups[it.ray] || []).push([k, it, q]);
+    price += it.price * q;
+  }
+  const order = Object.keys(RAYONS).filter(r => groups[r]);
+  const left = Object.keys(tot).filter(k => !sh.checked[k]).length;
   $("#sheet").innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center"><h2 style="margin:0">🛒 Liste de courses</h2><button class="btn sm ghost" data-close>✕</button></div>
-    ${items.map(r => `<h3 style="margin-top:12px">${r.emoji} ${esc(r.name)}</h3><ul>${r.ingredients.map(i => `<li>${esc(i)}</li>`).join("")}</ul>`).join("")}`;
+    <p class="muted" style="margin:4px 0 10px">Tous les ingrédients du plan regroupés par rayon. Coche au fur et à mesure.</p>
+    <div class="seg">${[1, 3, 7].map(d => `<button data-shopdays="${d}" class="${sh.days === d ? "on" : ""}">${d} jour${d > 1 ? "s" : ""}</button>`).join("")}</div>
+    <div class="total" style="margin:0 0 10px"><div><b>${price.toFixed(2)} CHF</b><span class="muted">estimation</span></div><div><b>${left}</b><span class="muted">articles restants</span></div></div>
+    ${order.map(r => `<h3 style="margin-top:14px">${RAYONS[r]}</h3>` + groups[r]
+      .sort((a, b) => a[1].n.localeCompare(b[1].n, "fr"))
+      .map(([k, it, q]) => `<div class="entry" data-shopchk="${k}" style="cursor:pointer;${sh.checked[k] ? "opacity:.4;text-decoration:line-through" : ""}">
+        <span class="e">${sh.checked[k] ? "✅" : "⬜"}</span>
+        <div class="n"><div>${esc(it.n)}</div></div>
+        <div class="v" style="color:var(--orange2)">${fmtQty(it, q)}</div></div>`).join("")).join("")}
+    <div class="row" style="margin-top:14px">
+      <button class="btn ghost" id="shopCopy">📋 Copier la liste</button>
+      <button class="btn ghost" id="shopReset">↺ Tout décocher</button>
+    </div>`;
   $("#modal").classList.add("on");
+}
+function shoppingText() {
+  const sh = state.shop, tot = shoppingItems(sh.days);
+  const lines = [`🛒 Courses GainsTracker (${sh.days} jour${sh.days > 1 ? "s" : ""})`];
+  for (const r of Object.keys(RAYONS)) {
+    const its = Object.entries(tot).filter(([k]) => ING[k].ray === r && !sh.checked[k]);
+    if (!its.length) continue;
+    lines.push("", RAYONS[r]);
+    its.forEach(([k, q]) => lines.push(`- ${ING[k].n}${fmtQty(ING[k], q) ? " : " + fmtQty(ING[k], q) : ""}`));
+  }
+  return lines.join("\n");
 }
 
 /* =====================================================================
@@ -862,7 +1026,7 @@ function show(v) {
 function renderAll() { renderHeader(); renderJournal(); renderPlan(); }
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-v],[data-cat],[data-rcp],[data-addrcp],[data-close],[data-del],[data-swap],[data-eat],[data-quick],[data-adj],#regenBtn,#shopBtn");
+  const t = e.target.closest("[data-v],[data-cat],[data-rcp],[data-addrcp],[data-close],[data-del],[data-swap],[data-eat],[data-quick],[data-adj],[data-shopdays],[data-shopchk],#regenBtn,#shopBtn,#shopCopy,#shopReset");
   if (!t) { if (e.target.id === "modal") closeModal(); return; }
   const d = t.dataset;
   if (d.v) show(d.v);
@@ -880,6 +1044,14 @@ document.addEventListener("click", e => {
   else if (d.adj) { const inp = d.adj === "k" ? $("#estKcal") : $("#estProt"); inp.value = Math.max(0, (+inp.value || 0) + (+d.d)); }
   else if (t.id === "regenBtn") { generatePlan(); toast("🎲 Nouvelle journée générée"); }
   else if (t.id === "shopBtn") showShopping();
+  else if (d.shopdays) { state.shop.days = +d.shopdays; save(); showShopping(); }
+  else if (d.shopchk) { state.shop.checked[d.shopchk] = !state.shop.checked[d.shopchk]; save(); showShopping(); }
+  else if (t.id === "shopReset") { state.shop.checked = {}; save(); showShopping(); }
+  else if (t.id === "shopCopy") {
+    const txt = shoppingText();
+    (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(() => toast("📋 Liste copiée"))
+      .catch(() => { const ta = document.createElement("textarea"); ta.value = txt; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); toast("📋 Liste copiée"); } catch (e) {} ta.remove(); });
+  }
 });
 
 $("#qAdd").onclick = () => {
