@@ -12,7 +12,10 @@ Carnet de prise de masse, en un seul fichier HTML, qui fonctionne hors ligne.
 - **Recettes** : 42 recettes simples avec des produits de base, prix en CHF (moyennes Migros / Coop).
 - **Photo** : estimation approximative à partir de la description du plat.
 
-## Données
+## Données et accès
+
+L'app est protégée par un code à 4 chiffres, créé au premier lancement sur chaque appareil (seul un hachage SHA-256 salé est stocké). Elle se reverrouille après 5 minutes en arrière-plan.
+
 
 Tout est enregistré dans le navigateur (localStorage) de l'appareil utilisé. Rien n'est envoyé sur un serveur.
 Les données restent d'une visite à l'autre, mais ne se synchronisent pas entre appareils.
