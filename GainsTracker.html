@@ -344,7 +344,7 @@ const CATS = {
    ray : rayon du magasin pour la liste de courses */
 const RAYONS = {
   frais:  "🥛 Produits laitiers & œufs",
-  viande: "🥩 Viande & saumon",
+  viande: "🥩 Viande",
   pain:   "🍞 Boulangerie",
   epic:   "🌾 Épicerie",
   fruits: "🍎 Fruits & légumes",
@@ -366,24 +366,18 @@ I("painMie","Pain de mie","tranche",[70,2.3,12,1.2],0.12,"pain");
 I("baguette","Demi-baguette","pc",[330,11,65,2],0.80,"pain");
 I("tortilla","Tortillas (wraps)","pc",[180,5,30,4.5],0.40,"pain");
 I("emmental","Emmental / gruyère râpé","g",[380,28,0,30],0.02,"frais");
-I("parmesan","Parmesan","g",[400,33,0,29],0.03,"frais");
-I("skyr","Skyr nature","g",[63,11,4,0.2],0.006,"frais");
 I("sere","Séré maigre","g",[68,12,4,0.3],0.004,"frais");
-I("yaourtGrec","Yaourt grec","g",[130,6,4,10],0.007,"frais");
-I("cottage","Cottage cheese","g",[100,12,3,4.5],0.009,"frais");
+I("creme","Crème entière","g",[200,2.5,3.5,20],0.006,"frais");
 I("beurre","Beurre","g",[740,0.7,0.6,82],0.013,"frais");
-I("proteinDrink","Boisson lactée protéinée (bouteille)","pc",[200,25,15,3],2.40,"frais");
-I("avocat","Avocat","pc",[240,3,13,22],1.50,"fruits");
-I("crudites","Crudités (salade, tomate)","g",[20,1,3,0.2],0.008,"fruits");
 I("oignon","Oignon","pc",[40,1,9,0],0.30,"fruits");
-I("pateDouce","Patate douce","g",[86,1.6,20,0.1],0.004,"fruits");
 I("pdt","Pommes de terre","g",[77,2,17,0.1],0.0018,"fruits");
-I("granola","Granola","g",[450,9,63,17],0.008,"epic");
 I("miel","Miel","g",[320,0.3,80,0],0.012,"epic");
 I("noix","Mélange de noix","g",[610,18,15,52],0.02,"epic");
 I("raisins","Raisins secs","g",[300,3,70,0.5],0.008,"epic");
 I("riz","Riz","g",[350,7,78,0.6],0.0025,"epic");
 I("rizRond","Riz rond (dessert)","g",[350,7,78,0.6],0.003,"epic");
+I("tortellini","Tortellini au fromage (frais)","g",[290,12,45,7],0.008,"frais");
+I("semoule","Semoule","g",[350,12,72,1.5],0.002,"epic");
 I("pates","Pâtes","g",[355,12.5,71,1.5],0.002,"epic");
 I("lentilles","Lentilles corail","g",[340,24,50,1.5],0.005,"epic");
 I("haricots","Haricots rouges (boîte)","g",[110,8,15,0.5],0.005,"epic");
@@ -397,19 +391,14 @@ I("pateTart","Pâte à tartiner","g",[540,6,57,31],0.009,"epic");
 I("confiture","Confiture","g",[250,0.4,60,0],0.006,"epic");
 I("cacao","Poudre chocolatée","g",[380,5,80,3],0.009,"epic");
 I("chocolat","Chocolat noir","g",[550,7,45,38],0.012,"epic");
-I("chia","Graines de chia","g",[490,17,42,31],0.02,"epic");
 I("sucre","Sucre","g",[400,0,100,0],0.0012,"epic");
-I("espresso","Café (expresso)","pc",[2,0,0,0],0.30,"epic");
 I("poulet","Blanc de poulet","g",[110,23,0,1.5],0.02,"viande");
-I("pouletCuit","Poulet cuit émincé","g",[140,24,1,4],0.035,"viande");
 I("boeuf","Bœuf haché 15%","g",[215,18.5,0,15.5],0.018,"viande");
 I("jambon","Jambon","g",[110,19,1,3.5],0.025,"viande");
 I("lardons","Lardons","g",[290,15,0.5,25],0.022,"viande");
 I("cervelas","Cervelas","pc",[250,11,2,22],1.10,"viande");
-I("saumon","Pavé de saumon","g",[200,20,0,13],0.045,"viande");
 I("legumes","Légumes surgelés","g",[45,2.5,7,0.5],0.004,"surg");
 I("petitsPois","Petits pois surgelés","g",[80,5.5,12,0.5],0.004,"surg");
-I("fruitsRouges","Fruits rouges surgelés","g",[45,1,8,0.3],0.009,"surg");
 I("eau","Eau","ml",[0,0,0,0],0,null);
 I("epices","Sel, poivre, épices","qs",[0,0,0,0],0,"cond");
 
@@ -451,15 +440,15 @@ R("b2","breakfast","Overnight oats (prêts la veille)","🥣",2,
 R("b3","breakfast","Birchermüesli express","🍏",3,
   [["avoine",50],["sere",150],["lait",100],["pomme",1,"râpée"],["miel",10]],
   ["Mélange avoine, séré et lait (idéalement la veille).","Râpe la pomme dedans.","Ajoute le miel et emporte."]);
-R("b4","breakfast","Banane + boisson protéinée","🍌",1,
-  [["proteinDrink",1],["banane",1]],
-  ["Prends une bouteille de boisson protéinée au frigo.","Prends une banane.","Zéro préparation : idéal quand tu n'as pas faim."]);
+R("b4","breakfast","Banane + grand verre de lait","🍌",1,
+  [["lait",400],["banane",1]],
+  ["Verse un grand verre de lait.","Prends une banane.","Zéro préparation : parfait quand tu n'as pas faim."]);
 R("b5","breakfast","Tartine PB-banane à emporter","🍞",2,
   [["painComplet",2],["pb",25],["banane",1]],
   ["Tartine le beurre de cacahuète.","Ajoute la banane en rondelles.","Referme en sandwich et emporte."]);
-R("b6","breakfast","Mini-bol skyr, granola & miel","🍯",2,
-  [["skyr",200],["granola",40],["miel",10]],
-  ["Verse le skyr dans un pot.","Ajoute le granola et le miel.","Se mange en 2 minutes."]);
+R("b6","breakfast","Séré, avoine & miel","🍯",2,
+  [["sere",200],["avoine",40],["miel",15]],
+  ["Mets le séré dans un pot.","Ajoute l'avoine et le miel, mélange.","Ça se mange en 2 minutes."]);
 R("b7","breakfast","Smoothie banane-lait-cacahuète","🥛",3,
   [["lait",300],["banane",1],["pb",20],["miel",10]],
   ["Mets tout dans le blender.","Mixe 20 secondes.","Verse dans une gourde et bois en route."]);
@@ -471,15 +460,15 @@ R("b8","breakfast","Lait chocolaté protéiné","🍫",1,
 R("s1","salty","Riz, poulet & huile d'olive","🍗",25,
   [["riz",120,"cru"],["poulet",180],["huile",15],["legumes",150],["epices"]],
   ["Fais cuire le riz.","Coupe le poulet en dés et saisis-le 6-8 min avec les épices.","Ajoute les légumes 3 min.","Sers sur le riz et arrose d'huile d'olive."]);
-R("s2","salty","Pâtes bolognaise bœuf haché","🍝",20,
-  [["pates",120,"crues"],["boeuf",150],["sauceTomate",150],["parmesan",20]],
-  ["Fais cuire les pâtes.","Fais dorer le bœuf, ajoute la sauce tomate, 5 min.","Mélange avec les pâtes et ajoute le parmesan."]);
-R("s3","salty","Wraps poulet-fromage-maïs","🌯",5,
-  [["tortilla",2],["pouletCuit",120],["mayo",20],["mais",50],["emmental",30]],
-  ["Mélange poulet, mayo et maïs.","Étale sur les tortillas, ajoute le fromage.","Roule et passe 1 min à la poêle (optionnel)."]);
-R("s4","salty","Patate douce, bœuf haché & œuf","🥩",25,
-  [["pateDouce",300],["boeuf",150],["oeuf",1],["epices"]],
-  ["Patate douce en cubes : 20 min au four à 200 °C (ou 8 min au micro-ondes).","Cuis le bœuf haché à la poêle.","Fais un œuf au plat et sers le tout."]);
+R("s2","salty","Pâtes bolognaise","🍝",20,
+  [["pates",120,"crues"],["boeuf",150],["sauceTomate",150],["emmental",20]],
+  ["Fais cuire les pâtes.","Fais dorer la viande hachée, ajoute la sauce tomate, 5 min.","Mélange avec les pâtes et mets du fromage râpé."]);
+R("s3","salty","Wraps poulet-fromage","🌯",12,
+  [["tortilla",2],["poulet",150],["mayo",20],["emmental",30]],
+  ["Coupe le poulet en lamelles et cuis-le 6-8 min à la poêle.","Étale la mayo sur les tortillas.","Ajoute poulet et fromage, roule."]);
+R("s4","salty","Pâtes jambon-crème-fromage","🧀",15,
+  [["pates",130,"crues"],["jambon",80],["creme",50],["emmental",40]],
+  ["Fais cuire les pâtes.","Égoutte, remets dans la casserole.","Ajoute jambon en dés, crème et fromage, mélange 1 min sur le feu."]);
 R("s5","salty","Riz cantonais œufs & jambon","🍚",20,
   [["riz",120,"cru"],["oeuf",3],["jambon",80],["petitsPois",80],["huile",10],["soja",10]],
   ["Cuis le riz (idéalement la veille).","Brouille les œufs à la poêle, réserve.","Saute riz, jambon et petits pois 4 min.","Ajoute les œufs et la sauce soja."]);
@@ -489,24 +478,24 @@ R("s6","salty","Chili con carne express","🌶️",30,
 R("s7","salty","Croque-monsieur x2","🥪",10,
   [["painMie",4],["jambon",80],["emmental",60],["beurre",10]],
   ["Beurre l'extérieur du pain.","Garnis de jambon et de fromage.","Dore 3 min par face à la poêle ou au four."]);
-R("s8","salty","Lentilles corail & cervelas","🍲",25,
+R("s8","salty","Lentilles & cervelas","🍲",25,
   [["lentilles",100],["cervelas",1],["oignon",1],["huile",10],["epices"]],
   ["Fais revenir l'oignon dans l'huile.","Ajoute les lentilles et 3 fois leur volume d'eau, 15 min.","Grille le cervelas en parallèle.","Sers ensemble."]);
 R("s9","salty","Pommes de terre, œufs au plat & lardons","🥔",25,
   [["pdt",350],["oeuf",3],["lardons",80],["huile",10]],
   ["Coupe les pommes de terre en dés, fais-les sauter 15 min.","Ajoute les lardons 5 min.","Casse les œufs dessus et couvre 3 min."]);
-R("s10","salty","Demi-baguette poulet fromage","🥖",5,
-  [["baguette",1],["pouletCuit",120],["emmental",30],["mayo",15],["crudites",50]],
-  ["Ouvre la baguette et tartine la mayo.","Garnis de poulet, fromage et crudités.","Referme, c'est prêt."]);
-R("s11","salty","Bol saumon, riz & avocat","🍣",20,
-  [["riz",120,"cru"],["saumon",130],["avocat",0.5],["soja",10]],
-  ["Cuis le riz.","Cuis le saumon 4 min par face à la poêle.","Dispose riz, saumon émietté et avocat.","Assaisonne de sauce soja."]);
+R("s10","salty","Demi-baguette jambon-beurre-fromage","🥖",3,
+  [["baguette",1],["jambon",80],["emmental",30],["beurre",10]],
+  ["Ouvre la baguette et beurre-la.","Ajoute jambon et fromage.","C'est prêt."]);
+R("s11","salty","Tortellini sauce tomate & fromage","🥟",8,
+  [["tortellini",250],["sauceTomate",100],["emmental",30]],
+  ["Cuis les tortellini 2-3 min dans l'eau bouillante.","Égoutte et ajoute la sauce tomate.","Mets le fromage râpé dessus."]);
 R("s12","salty","Omelette fromage + tartines","🍳",10,
   [["oeuf",4],["emmental",40],["painComplet",2],["beurre",10]],
   ["Bats les œufs avec sel et poivre.","Verse dans la poêle beurrée, ajoute le fromage.","Plie quand elle prend et sers avec le pain."]);
-R("s13","salty","Toasts œufs brouillés & avocat","🥑",10,
-  [["oeuf",3],["avocat",1],["painComplet",2],["epices"]],
-  ["Fais griller le pain.","Écrase l'avocat avec sel et poivre.","Fais des œufs brouillés et pose-les sur les toasts."]);
+R("s13","salty","Œufs brouillés jambon + tartines","🍳",8,
+  [["oeuf",3],["jambon",50],["painComplet",2],["beurre",5]],
+  ["Bats les œufs et ajoute le jambon en morceaux.","Cuis dans la poêle beurrée en remuant 2-3 min.","Sers avec le pain."]);
 
 // ---------- GAINERS MAISON ----------
 R("g1","gainer","Gainer classique avoine-banane-PB","🥤",3,
@@ -515,12 +504,12 @@ R("g1","gainer","Gainer classique avoine-banane-PB","🥤",3,
 R("g2","gainer","Gainer chocolat-noisette","🍫",3,
   [["lait",400],["whey",30,"chocolat"],["avoine",50],["pateTart",20],["banane",1]],
   ["Mets tout dans le blender.","Mixe 30-45 secondes.","Ajoute des glaçons si tu le veux frais."]);
-R("g3","gainer","Gainer fruits rouges & skyr","🍓",3,
-  [["skyr",200],["fruitsRouges",150],["lait",300],["avoine",50],["miel",20]],
-  ["Mixe l'avoine en poudre.","Ajoute le reste.","Mixe jusqu'à texture lisse."]);
-R("g4","gainer","Gainer café moka","☕",3,
-  [["lait",300],["espresso",1,"refroidi"],["whey",30],["avoine",50],["pb",20],["miel",15]],
-  ["Prépare et refroidis l'expresso.","Mixe tout avec quelques glaçons.","Bois-le dans la journée ou avant la séance."]);
+R("g3","gainer","Gainer banane-séré","🍌",3,
+  [["sere",200],["lait",300],["banane",1],["avoine",50],["miel",20]],
+  ["Mixe l'avoine en poudre.","Ajoute le reste.","Mixe 30 secondes."]);
+R("g4","gainer","Gainer chocolat sans whey","🍫",3,
+  [["lait",500],["avoine",60],["banane",1],["cacao",20],["pb",20]],
+  ["Mixe l'avoine en poudre.","Ajoute le reste.","Mixe 30 secondes, comme un milkshake."]);
 R("g5","gainer","Gainer budget (sans whey)","💸",3,
   [["lait",500],["avoine",80],["banane",1],["pb",30],["miel",25]],
   ["Mixe l'avoine en poudre.","Ajoute le reste et mixe.","Le plus rentable en calories par franc !"]);
@@ -535,12 +524,12 @@ R("d2","dessert","Séré, banane & chocolat","🍫",3,
 R("d3","dessert","Mug cake protéiné","🧁",5,
   [["whey",30],["avoine",30,"mixés"],["oeuf",1],["pb",15],["lait",30]],
   ["Mélange tout dans un grand mug.","Micro-ondes 60-90 secondes.","Laisse tiédir 1 min."]);
-R("d4","dessert","Pudding chia au lait","🥄",5,
-  [["chia",40],["lait",250],["miel",15],["fruitsRouges",80]],
-  ["Mélange chia, lait et miel.","Remue après 5 min puis laisse une nuit au frais.","Ajoute les fruits au moment de servir."]);
-R("d5","dessert","Bananes poêlées, yaourt grec & PB","🍌",7,
-  [["banane",2],["pb",20],["yaourtGrec",200]],
-  ["Poêle les bananes en rondelles 3 min.","Verse sur le yaourt grec.","Ajoute le beurre de cacahuète."]);
+R("d4","dessert","Semoule au lait","🥣",10,
+  [["semoule",60],["lait",400],["sucre",25]],
+  ["Chauffe le lait avec le sucre.","Verse la semoule en pluie en remuant.","Cuis 3-4 min jusqu'à ce que ça épaississe."]);
+R("d5","dessert","Bananes poêlées, séré & cacahuète","🍌",7,
+  [["banane",2],["pb",20],["sere",200]],
+  ["Poêle les bananes en rondelles 3 min.","Verse sur le séré.","Ajoute le beurre de cacahuète."]);
 R("d6","dessert","Pancakes protéinés (week-end)","🥞",15,
   [["avoine",60,"mixés"],["oeuf",2],["banane",1],["whey",30],["miel",20]],
   ["Mixe avoine, œufs, banane et whey.","Cuis des petites louches 2 min par face.","Empile et arrose de miel."]);
@@ -552,9 +541,9 @@ R("n1","snack","Mix noix & raisins secs","🥜",1,
 R("n2","snack","Wrap jambon-fromage","🌯",2,
   [["tortilla",1],["jambon",60],["emmental",30]],
   ["Garnis la tortilla de jambon et de fromage.","Roule serré.","Se mange froid ou 1 min à la poêle."]);
-R("n3","snack","Tartines cottage cheese & jambon","🍞",3,
-  [["cottage",200],["painComplet",2],["jambon",40]],
-  ["Toaste le pain.","Étale le cottage cheese.","Ajoute le jambon et du poivre."]);
+R("n3","snack","Tartines jambon-fromage","🍞",2,
+  [["painComplet",2],["beurre",10],["jambon",40],["emmental",30]],
+  ["Beurre le pain.","Ajoute jambon et fromage.","À manger tel quel ou toasté."]);
 R("n4","snack","Barres maison avoine-PB-miel (x2)","🍫",10,
   [["avoine",60],["pb",30],["miel",20],["whey",15]],
   ["Chauffe légèrement PB et miel.","Mélange avec l'avoine et la whey.","Tasse dans un moule, 1 h au frigo, coupe en 2."]);
@@ -575,8 +564,8 @@ R("w2","whey","Shaker whey au lait entier","🥛",1,
 R("w3","whey","Double whey + avoine instantanée","💪",2,
   [["whey",45],["lait",400],["avoine",40,"instantanés"]],
   ["Mets tout dans un grand shaker.","Secoue énergiquement 30 secondes."]);
-R("w4","whey","Shaker whey + skyr","🥄",2,
-  [["whey",30],["skyr",150],["lait",250]],
+R("w4","whey","Shaker whey + séré","🥄",2,
+  [["whey",30],["sere",150],["lait",250]],
   ["Secoue fort dans un shaker à boule (ou mixe).","Bois frais."]);
 
 /* Base d'estimation photo : portions "normales" typiques */
@@ -812,8 +801,9 @@ function planScore(ids, T) {
   const k = ids.reduce((s, id) => s + byId(id).kcal, 0);
   const p = ids.reduce((s, id) => s + byId(id).p, 0);
   // pénalise fort le manque, légèrement l'excès ; protéines sous l'objectif = très pénalisé
+  const price = ids.reduce((s, id) => s + byId(id).price, 0);
   const dk = k - T.kcal;
-  return (dk < 0 ? -dk * 1.5 : dk * 0.8) + (p < T.prot ? (T.prot - p) * 25 : (p - T.prot) * 2);
+  return price * 8 + (dk < 0 ? -dk * 1.5 : dk * 0.8) + (p < T.prot ? (T.prot - p) * 25 : (p - T.prot) * 2);
 }
 
 const LAYOUTS = [
@@ -824,8 +814,7 @@ const LAYOUTS = [
 ];
 
 function generatePlan() {
-  const T = targets();
-  let best = null, bestS = Infinity, bestSlots = null;
+  const T = targets(), cands = [];
   for (const slots of LAYOUTS) {
     for (let i = 0; i < 1200; i++) {
       const ids = [], used = new Set();
@@ -833,11 +822,13 @@ function generatePlan() {
         const r = pick(pool(s).filter(r => !used.has(r.id)));
         ids.push(r.id); used.add(r.id);
       }
-      const sc = planScore(ids, T);
-      if (sc < bestS) { bestS = sc; best = ids; bestSlots = slots; }
+      cands.push({ s: planScore(ids, T), ids, slots });
     }
   }
-  state.plan = bestSlots.map((s, i) => ({ slot: s, id: best[i], done: false }));
+  // tire au hasard parmi les 20 meilleurs plans pour varier d'une génération à l'autre
+  cands.sort((a, b) => a.s - b.s);
+  const chosen = pick(cands.slice(0, 20));
+  state.plan = chosen.slots.map((s, i) => ({ slot: s, id: chosen.ids[i], done: false }));
   if (state.shop) state.shop.checked = {};
   save(); renderPlan();
 }
