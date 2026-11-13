@@ -12,10 +12,9 @@ Carnet de prise de masse, en un seul fichier HTML, qui fonctionne hors ligne.
 - **Recettes** : 42 recettes simples avec des produits de base, prix en CHF (moyennes Migros / Coop).
 - **Photo** : estimation approximative à partir de la description du plat.
 
-## Données et accès
+## Connexion et données
 
-Connexion par **nom d'utilisateur + mot de passe**. Ces identifiants ne sont stockés nulle part : ils servent à dériver une clé (PBKDF2-SHA256, 310 000 itérations, sel aléatoire) qui chiffre toutes les données en **AES-256-GCM** dans le navigateur. Un mauvais identifiant rend le déchiffrement impossible. Déconnexion automatique après 5 minutes en arrière-plan.
-
-
-Tout est enregistré dans le navigateur (localStorage) de l'appareil utilisé. Rien n'est envoyé sur un serveur.
-Les données restent d'une visite à l'autre, mais ne se synchronisent pas entre appareils.
+- Connexion avec **« Continuer avec GitHub »** (Firebase Authentication, projet `gainstracker-85440`).
+- Données stockées dans **Cloud Firestore** (région `europe-west6`, Zurich), un document par compte (`users/{uid}`), synchronisées en temps réel entre appareils et disponibles hors ligne.
+- Règles Firestore : un compte ne peut lire et écrire que son propre document ; tout le reste est refusé. L'accès est limité à l'UID du propriétaire.
+- La configuration web Firebase présente dans `index.html` n'est pas un secret : elle identifie le projet, la sécurité repose sur l'authentification et les règles serveur.

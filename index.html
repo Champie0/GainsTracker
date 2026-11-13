@@ -1659,7 +1659,14 @@ $("#resetAll").onclick = () => { if (confirm("Tout effacer : profil, journal et 
    La config web Firebase n'est pas secrète (elle identifie le projet) :
    la sécurité repose sur l'authentification et les règles serveur.
    ===================================================================== */
-const FIREBASE_CONFIG = { apiKey: "", authDomain: "", projectId: "", appId: "" };
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDqrh-yHBOa1gezZcFfdXTZCzCI9ILi2ec",
+  authDomain: "gainstracker-85440.firebaseapp.com",
+  projectId: "gainstracker-85440",
+  storageBucket: "gainstracker-85440.firebasestorage.app",
+  messagingSenderId: "51844895683",
+  appId: "1:51844895683:web:e66a2621fb3716afaa6376"
+};
 const ALLOWED_UIDS = [];
 const FB_V = "11.0.2";
 const UI_KEY = "gt:ui", LEGACY_VAULT = "gt:v1", LEGACY_KEYS = [LS_KEY, "gainstracker_lock"];
