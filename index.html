@@ -384,6 +384,24 @@ button.th:hover{color:var(--text)}
 .linkb:hover{color:var(--text)}
 @media (max-width:700px){.metric .row1{flex-direction:column;align-items:flex-start;gap:10px}.metric .ring svg{width:58px;height:58px}.metric .big small{display:block;margin:2px 0 0}}
 
+/* ---- Connexion GitHub & synchro ---- */
+.auth-body{margin:20px 0 4px;display:grid;gap:10px}
+.btn.gh{background:var(--text);border-color:var(--text);color:var(--surface);box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 2px 8px -2px rgba(0,0,0,.35)}
+.btn.gh:hover{background:var(--text);filter:brightness(1.18)}
+.btn.gh:active{filter:brightness(.95)}
+.auth-loading{display:grid;place-items:center;height:44px}
+.spin.dark{width:22px;height:22px;border-color:var(--line-2);border-top-color:var(--accent)}
+.who{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r);background:var(--hover);font-size:13px}
+.avatar{width:28px;height:28px;border-radius:50%;object-fit:cover;background:var(--line-2);flex:0 0 auto}
+.sync{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text-2);padding:0 4px;white-space:nowrap}
+.sync:empty{display:none}
+.sync i{width:7px;height:7px;border-radius:50%;background:var(--text-3);flex:0 0 auto}
+.sync.ok i{background:var(--olive)}
+.sync.saving i{background:#C8892B;animation:blink 1s ease-in-out infinite}
+.sync.error i{background:var(--accent)}
+@keyframes blink{50%{opacity:.25}}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:11.5px;color:var(--text-2);word-break:break-all}
+@media (max-width:1180px){.sb-foot{flex-direction:column;align-items:center}.sync{margin:4px 0 0}.sync span{display:none}}
 /* ---- Connexion ---- */
 .auth-card{width:min(380px,calc(100vw - 32px));text-align:left;padding:30px 26px 20px}
 .auth-card .app-icon{margin:0 auto 14px}
@@ -510,6 +528,8 @@ button.th:hover{color:var(--text)}
   <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></symbol>
   <symbol id="i-del" viewBox="0 0 24 24"><path d="M9 5h11v14H9l-6-7z"/><path d="M12.5 9.5l5 5M17.5 9.5l-5 5"/></symbol>
+  <symbol id="i-login" viewBox="0 0 24 24"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4M10 16l4-4-4-4M14 12H3"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18.5h10.5a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.6 9.1 4.75 4.75 0 0 0 7 18.5z"/></symbol>
   <symbol id="i-chev" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5"/></symbol>
   <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></symbol>
   <symbol id="i-cup" viewBox="0 0 24 24"><path d="M5 9h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5z"/><path d="M16 11h1.5a2 2 0 0 1 0 4H16M9 3v3M12 3v3"/></symbol>
@@ -540,6 +560,7 @@ button.th:hover{color:var(--text)}
   <div class="sb-foot">
     <button class="ibtn" id="lockBtn" data-tip="Se déconnecter" data-tip-pos="right" aria-label="Se déconnecter"><svg class="ic"><use href="#i-lock"/></svg></button>
     <button class="ibtn" id="themeBtn" data-tip="Thème" data-tip-pos="right" aria-label="Changer de thème"></button>
+    <span class="sync" id="syncPill" role="status"></span>
   </div>
 </aside>
 
@@ -741,7 +762,7 @@ button.th:hover{color:var(--text)}
           <div class="surface panel">
             <div class="panel-head"><h2>Données</h2></div>
             <div class="panel-body">
-              <p class="t2" style="font-size:12.5px;margin-bottom:12px">Tes données sont chiffrées (AES-256) dans ce navigateur. Rien n'est envoyé sur internet.</p>
+              <p class="t2" style="font-size:12.5px;margin-bottom:12px">Tes données sont enregistrées dans ton compte et synchronisées sur tous tes appareils.</p>
               <div style="display:flex;gap:8px;flex-wrap:wrap">
                 <button class="btn" id="resetToday">Vider le jour</button>
                 <button class="btn" id="resetAll" style="color:var(--accent)">Tout réinitialiser</button>
@@ -764,24 +785,13 @@ button.th:hover{color:var(--text)}
 </nav>
 
 <div class="lock" id="auth" role="dialog" aria-modal="true" aria-labelledby="authTitle">
-  <form class="lock-card auth-card glass" id="authForm" novalidate>
+  <div class="lock-card auth-card glass">
     <div class="app-icon" aria-hidden="true">G</div>
     <h2 id="authTitle">GainsTracker</h2>
     <p id="authMsg" aria-live="polite"></p>
-    <div class="auth-fields">
-      <label class="field"><span>Nom d'utilisateur</span>
-        <input class="input" id="aUser" name="username" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false"></label>
-      <label class="field"><span>Mot de passe</span>
-        <span class="pw"><input class="input" id="aPass" name="password" type="password" autocomplete="current-password">
-        <button type="button" class="ibtn" id="aEye" aria-label="Afficher le mot de passe" aria-pressed="false"><svg class="ic sm"><use href="#i-eye"/></svg></button></span></label>
-      <div id="aStrengthWrap" hidden><div class="strength"><i id="aStrength"></i></div><div class="strength-l" id="aStrengthL"></div></div>
-      <label class="field" id="aConfWrap" hidden><span>Confirmer le mot de passe</span>
-        <input class="input" id="aConf" name="password-confirm" type="password" autocomplete="new-password"></label>
-    </div>
-    <button class="btn pri full lg" id="aSubmit" type="submit">Se connecter</button>
-    <div class="auth-foot" id="authFoot"></div>
-    <div class="secure-note"><svg class="ic sm"><use href="#i-lock"/></svg><span>Ton nom d'utilisateur et ton mot de passe ne sont stockés nulle part. Ils servent de clé pour chiffrer tes données (AES-256) sur cet appareil.</span></div>
-  </form>
+    <div id="authBody" class="auth-body"></div>
+    <div class="secure-note"><svg class="ic sm"><use href="#i-lock"/></svg><span>Connexion sécurisée par Firebase (Google) avec ton compte GitHub. Seul ton compte peut lire et modifier ton carnet.</span></div>
+  </div>
 </div>
 <div class="ctx glass" id="ctx" role="menu"></div>
 <div class="modal" id="modal"><div class="window glass" id="sheet" role="dialog" aria-modal="true"></div></div>
@@ -1081,13 +1091,13 @@ const DEFAULT_STATE = {
   journal: {}, plan: null, shop: { days: 1, checked: {} }, theme: "papier"
 };
 const clone = o => JSON.parse(JSON.stringify(o));
-// Les données ne sont jamais écrites en clair : save() chiffre l'état
-// avec la clé dérivée des identifiants (voir section 12).
-let vaultKey = null, saveQ = Promise.resolve();
+// Les données vivent dans Firestore (document users/{uid}) : save() programme
+// un envoi groupé ; la synchro temps réel est gérée en section 12.
+let cloud = null, cloudUser = null, saveTimer = 0;
 function save() {
-  if (!vaultKey) return;
-  const key = vaultKey;
-  saveQ = saveQ.then(() => sealState(key)).catch(() => {});
+  if (!cloudUser) return;
+  clearTimeout(saveTimer); setSync("saving");
+  saveTimer = setTimeout(pushState, 500);
 }
 let state = clone(DEFAULT_STATE);
 
@@ -1640,225 +1650,219 @@ $("#resetAll").onclick = () => { if (confirm("Tout effacer : profil, journal et 
 
 
 /* =====================================================================
-   12. AUTHENTIFICATION & CHIFFREMENT
-   - Aucun identifiant n'est stocké : nom d'utilisateur + mot de passe
-     → PBKDF2-SHA256 (310 000 itérations, sel aléatoire) → clé AES-256-GCM.
-   - Tout l'état (profil, journal, plan…) est chiffré avec cette clé.
-     Un mauvais identifiant = déchiffrement impossible (tag GCM invalide).
-   - La clé vit en mémoire ; une copie de session (onglet courant) évite
-     de se reconnecter à chaque rechargement, effacée à la déconnexion.
+   12. CONNEXION GITHUB (Firebase Auth) & SYNCHRO (Firestore)
+   - Connexion : bouton « Continuer avec GitHub » (OAuth via Firebase).
+   - Données : un document Firestore par compte, users/{uid}.
+   - Accès : les règles Firestore n'autorisent que l'UID listé ci-dessous ;
+     l'app refuse aussi tout autre compte. Les inscriptions sont fermées
+     côté Firebase une fois ton compte créé.
+   La config web Firebase n'est pas secrète (elle identifie le projet) :
+   la sécurité repose sur l'authentification et les règles serveur.
    ===================================================================== */
-const VAULT_KEY = "gt:v1", SESSION_KEY = "gt:s", UI_KEY = "gt:ui";
-const LEGACY_KEYS = [LS_KEY, "gainstracker_lock"];
-const ITER = 310000, AUTO_LOCK_MS = 5 * 60 * 1000;
-const te = new TextEncoder(), td = new TextDecoder();
-let authMode = null, authBusy = false, fails = 0;
-const b64 = u8 => { let x = ""; for (let i = 0; i < u8.length; i += 0x8000) x += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(x); };
-const unb64 = t => Uint8Array.from(atob(t), c => c.charCodeAt(0));
-const sleep = ms => new Promise(r => setTimeout(r, ms));
-const getVault = () => { try { return JSON.parse(localStorage.getItem(VAULT_KEY)); } catch (e) { return null; } };
-const cryptoOK = () => !!(window.crypto && crypto.subtle && window.isSecureContext !== false);
+const FIREBASE_CONFIG = { apiKey: "", authDomain: "", projectId: "", appId: "" };
+const ALLOWED_UIDS = [];
+const FB_V = "11.0.2";
+const UI_KEY = "gt:ui", LEGACY_VAULT = "gt:v1", LEGACY_KEYS = [LS_KEY, "gainstracker_lock"];
+const AUTO_LOCK_MS = 30 * 60 * 1000;
+let unsub = null, lastPushed = "";
 
-async function deriveKey(user, pass, salt, iter) {
-  const base = await crypto.subtle.importKey("raw", te.encode(user.trim().toLowerCase() + "\u0000" + pass), "PBKDF2", false, ["deriveKey"]);
-  return crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: iter, hash: "SHA-256" }, base, { name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]);
+async function loadCloud() {
+  if (window.__GT_CLOUD__) return window.__GT_CLOUD__;            // utilisé par les tests
+  const base = `https://www.gstatic.com/firebasejs/${FB_V}/`;
+  const [{ initializeApp }, A, F] = await Promise.all([import(base + "firebase-app.js"), import(base + "firebase-auth.js"), import(base + "firebase-firestore.js")]);
+  const app = initializeApp(FIREBASE_CONFIG);
+  const auth = A.getAuth(app);
+  let db;
+  try { db = F.initializeFirestore(app, { localCache: F.persistentLocalCache({ tabManager: F.persistentMultipleTabManager() }) }); }
+  catch (e) { db = F.getFirestore(app); }
+  return {
+    onAuth: cb => A.onAuthStateChanged(auth, cb),
+    signIn: async () => {
+      const p = new A.GithubAuthProvider();
+      try { return await A.signInWithPopup(auth, p); }
+      catch (e) { if (e.code === "auth/popup-blocked" || e.code === "auth/operation-not-supported-in-this-environment") return A.signInWithRedirect(auth, p); throw e; }
+    },
+    signOut: () => A.signOut(auth),
+    subscribe: (uid, cb, err) => F.onSnapshot(F.doc(db, "users", uid), { includeMetadataChanges: true }, snap => cb(snap.exists() ? snap.data() : null, snap.metadata), err),
+    write: (uid, data) => F.setDoc(F.doc(db, "users", uid), { ...data, updatedAt: F.serverTimestamp() })
+  };
 }
-async function sealState(key, salt, iter) {
-  const V = getVault();
-  salt = salt || unb64(V.salt); iter = iter || V.iter;
-  const iv = crypto.getRandomValues(new Uint8Array(12));
-  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, te.encode(JSON.stringify(state))));
-  localStorage.setItem(VAULT_KEY, JSON.stringify({ v: 1, iter, salt: b64(salt), iv: b64(iv), ct: b64(ct) }));
+
+/* ---------- Indicateur de synchro ---------- */
+const SYNC_TXT = { ok: "Synchronisé", saving: "Enregistrement…", offline: "Hors ligne · enregistré ici", error: "Erreur de synchro", off: "" };
+let syncState = "off";
+function setSync(st) {
+  syncState = st;
+  const pill = $("#syncPill");
+  pill.className = "sync " + st; pill.innerHTML = st === "off" ? "" : `<i></i><span>${SYNC_TXT[st]}</span>`;
+  pill.dataset.tip = SYNC_TXT[st];
+  const row = $("#syncRow"); if (row) row.innerHTML = `<span class="sync ${st}" style="margin:0"><i></i><span>${SYNC_TXT[st] || "—"}</span></span>`;
 }
-async function openVault(key, V) {
-  return JSON.parse(td.decode(await crypto.subtle.decrypt({ name: "AES-GCM", iv: unb64(V.iv) }, key, unb64(V.ct))));
-}
-async function keepSession(key) {
-  try { sessionStorage.setItem(SESSION_KEY, b64(new Uint8Array(await crypto.subtle.exportKey("raw", key)))); } catch (e) {}
+addEventListener("online", () => { if (cloudUser) pushState(true); });
+addEventListener("offline", () => { if (cloudUser) setSync("offline"); });
+
+async function pushState(force) {
+  if (!cloudUser || !cloud) return;
+  const json = JSON.stringify(state);
+  if (json === lastPushed && !force) { setSync(navigator.onLine ? "ok" : "offline"); return; }
+  lastPushed = json; setSync(navigator.onLine ? "saving" : "offline");
+  try { await cloud.write(cloudUser.uid, { state: json }); setSync("ok"); }
+  catch (e) { lastPushed = ""; setSync(e && e.code === "permission-denied" ? "error" : navigator.onLine ? "error" : "offline"); }
 }
 
 /* ---------- Écran de connexion ---------- */
-const AUTH_TXT = {
-  create: ["Crée ton compte", "Choisis un nom d'utilisateur et un mot de passe pour protéger ton carnet.", "Créer le compte"],
-  login:  ["Connexion", "Connecte-toi pour ouvrir ton carnet.", "Se connecter"]
-};
-function openAuth(mode) {
-  authMode = mode;
-  const [t, m, b] = AUTH_TXT[mode];
-  $("#authTitle").textContent = t; setAuthMsg(m);
-  $("#aSubmit").textContent = b;
-  $("#aConfWrap").hidden = $("#aStrengthWrap").hidden = mode !== "create";
-  $("#aPass").autocomplete = mode === "create" ? "new-password" : "current-password";
-  $("#authFoot").innerHTML = mode === "login" ? `<button class="linkb" type="button" id="forgot">Mot de passe oublié ?</button>` : "";
-  if (mode === "login") $("#forgot").onclick = forgotPassword;
-  if (!cryptoOK()) { setAuthMsg("Le chiffrement demande une connexion sécurisée. Ouvre l'app depuis son adresse https.", true); $("#aSubmit").disabled = true; }
+const nameOf = u => (u && (u.reloadUserInfo && u.reloadUserInfo.screenName)) || (u && (u.displayName || u.email)) || "GitHub";
+function authView(kind, arg) {
+  const B = $("#authBody"), M = $("#authMsg");
+  M.style.color = "";
   closeCtx(); closeModal();
   $("#auth").classList.add("on"); document.body.style.overflow = "hidden";
-  setTimeout(() => $(mode === "login" && $("#aUser").value ? "#aPass" : "#aUser").focus(), 60);
+  if (kind === "signin") {
+    M.textContent = "Connecte-toi pour retrouver ton carnet sur tous tes appareils.";
+    B.innerHTML = `<button class="btn gh full lg" id="ghBtn" type="button">${ic("login", "sm")}Continuer avec GitHub</button>`;
+    $("#ghBtn").onclick = signIn;
+  } else if (kind === "loading") {
+    M.textContent = arg || "Connexion…";
+    B.innerHTML = `<div class="auth-loading"><span class="spin dark"></span></div>`;
+  } else if (kind === "denied") {
+    M.innerHTML = `Ce carnet est privé.`;
+    B.innerHTML = `<div class="who">${arg && arg.photoURL ? `<img class="avatar" src="${esc(arg.photoURL)}" alt="">` : ""}<span>Le compte <b>${esc(nameOf(arg))}</b> n'a pas accès à cette app.</span></div>
+      <button class="btn full lg" id="otherBtn" type="button">Utiliser un autre compte</button>`;
+    $("#otherBtn").onclick = () => cloud.signOut();
+  } else if (kind === "config") {
+    M.textContent = "L'app n'est pas encore reliée à son service de connexion.";
+    B.innerHTML = "";
+  } else if (kind === "error") {
+    M.textContent = arg; M.style.color = "var(--accent)";
+    B.innerHTML = `<button class="btn full lg" id="retryBtn" type="button">${ic("refresh", "sm")}Réessayer</button>`;
+    $("#retryBtn").onclick = () => location.reload();
+  }
 }
 function closeAuth() { $("#auth").classList.remove("on"); document.body.style.overflow = ""; }
-function setAuthMsg(t, err) { const m = $("#authMsg"); m.textContent = t; m.style.color = err ? "var(--accent)" : ""; }
-function authErr(msg, field) {
-  setAuthMsg(msg, true);
-  const c = $("#authForm"); c.classList.remove("err"); void c.offsetWidth; c.classList.add("err");
-  $$(".auth-card .input").forEach(i => i.classList.remove("bad"));
-  if (field) { $(field).classList.add("bad"); $(field).focus(); }
+async function signIn() {
+  const b = $("#ghBtn"); b.disabled = true; b.innerHTML = `<span class="spin"></span>Ouverture de GitHub…`;
+  try { await cloud.signIn(); }
+  catch (e) {
+    const c = e && e.code;
+    authView("signin");
+    $("#authMsg").textContent = c === "auth/popup-closed-by-user" || c === "auth/cancelled-popup-request" ? "Connexion annulée. Réessaie quand tu veux."
+      : c === "auth/unauthorized-domain" ? "Ce site n'est pas encore autorisé dans Firebase."
+      : c === "auth/admin-restricted-operation" ? "Les inscriptions sont fermées : ce compte n'a pas accès."
+      : c === "auth/network-request-failed" ? "Pas de connexion internet."
+      : "La connexion a échoué. Réessaie.";
+    $("#authMsg").style.color = "var(--accent)";
+  }
 }
-function setBusy(on) {
-  authBusy = on; const b = $("#aSubmit"); b.disabled = on;
-  b.innerHTML = on ? `<span class="spin"></span>${authMode === "create" ? "Chiffrement…" : "Vérification…"}` : AUTH_TXT[authMode][2];
-}
-function strength(pw) {
-  let sc = 0;
-  if (pw.length >= 8) sc++; if (pw.length >= 12) sc++;
-  if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) sc++; if (/\d/.test(pw)) sc++; if (/[^\w]/.test(pw)) sc++;
-  return sc;
-}
-$("#aPass").addEventListener("input", e => {
-  e.target.classList.remove("bad");
-  if (authMode !== "create") return;
-  const v = e.target.value, sc = strength(v);
-  const lv = !v ? ["", 0, "var(--hover)"] : sc <= 2 ? ["Faible", 30, "var(--accent)"] : sc <= 3 ? ["Correct", 62, "#C8892B"] : ["Solide", 100, "var(--olive)"];
-  $("#aStrength").style.width = lv[1] + "%"; $("#aStrength").style.background = lv[2];
-  $("#aStrengthL").textContent = v ? `Mot de passe ${lv[0].toLowerCase()}${v.length < 8 ? " · 8 caractères minimum" : ""}` : "8 caractères minimum";
-});
-["#aUser", "#aConf"].forEach(f => $(f).addEventListener("input", e => e.target.classList.remove("bad")));
-$("#aEye").onclick = () => {
-  const show = $("#aPass").type === "password";
-  ["#aPass", "#aConf"].forEach(f => $(f).type = show ? "text" : "password");
-  $("#aEye").setAttribute("aria-pressed", show); $("#aEye").setAttribute("aria-label", show ? "Masquer le mot de passe" : "Afficher le mot de passe");
-};
 
-$("#authForm").onsubmit = async e => {
-  e.preventDefault();
-  if (authBusy || !cryptoOK()) return;
-  const user = $("#aUser").value.trim(), pass = $("#aPass").value;
-  if (user.length < 3) return authErr("Nom d'utilisateur : 3 caractères minimum.", "#aUser");
-  if (authMode === "create") {
-    if (pass.length < 8) return authErr("Mot de passe : 8 caractères minimum.", "#aPass");
-    if (pass !== $("#aConf").value) return authErr("Les deux mots de passe sont différents.", "#aConf");
-  } else if (!pass) return authErr("Entre ton mot de passe.", "#aPass");
-  setBusy(true);
-  try {
-    if (authMode === "create") {
-      const salt = crypto.getRandomValues(new Uint8Array(16));
-      const key = await deriveKey(user, pass, salt, ITER);
-      let legacy = null; try { legacy = JSON.parse(localStorage.getItem(LS_KEY)); } catch (er) {}
-      state = legacy && legacy.profile ? { ...clone(DEFAULT_STATE), ...legacy } : { ...clone(DEFAULT_STATE), theme: state.theme };
-      state.account = { user, created: Date.now() };
-      await sealState(key, salt, ITER);
-      LEGACY_KEYS.forEach(k => localStorage.removeItem(k));   // plus aucune donnée en clair
-      await unlocked(key, { first: !legacy });
+/* ---------- Cycle de session ---------- */
+async function startCloud() {
+  if (!FIREBASE_CONFIG.apiKey && !window.__GT_CLOUD__) return authView("config");
+  authView("loading");
+  try { cloud = await loadCloud(); }
+  catch (e) { return authView("error", "Impossible de charger la connexion. Vérifie ta connexion internet."); }
+  cloud.onAuth(u => u ? onSignedIn(u) : onSignedOut());
+}
+function onSignedIn(user) {
+  if (ALLOWED_UIDS.length && !ALLOWED_UIDS.includes(user.uid)) { cloudUser = null; return authView("denied", user); }
+  cloudUser = user; lastPushed = "";
+  authView("loading", "Chargement de ton carnet…");
+  if (unsub) unsub();
+  let first = true;
+  unsub = cloud.subscribe(user.uid, (data, meta) => {
+    if (meta.hasPendingWrites) return;
+    const json = data && data.state;
+    if (first) {
+      if (!json && meta.fromCache) return;          // attendre le serveur avant de conclure à un nouveau compte
+      first = false;
+      if (json) { state = { ...clone(DEFAULT_STATE), ...JSON.parse(json) }; lastPushed = json; }
+      else {
+        let legacy = null; try { legacy = JSON.parse(localStorage.getItem(LS_KEY)); } catch (e) {}
+        state = legacy && legacy.profile ? { ...clone(DEFAULT_STATE), ...legacy } : { ...clone(DEFAULT_STATE), theme: state.theme };
+      }
+      state.account = accountOf(user);
+      afterLoad(!json);
+      if (!json) { pushState(true); LEGACY_KEYS.forEach(k => localStorage.removeItem(k)); }
+      setSync(meta.fromCache ? "offline" : "ok");
     } else {
-      if (fails >= 3) { setAuthMsg("Patiente un instant…"); await sleep(Math.min(15000, 1000 * 2 ** (fails - 3))); }
-      const V = getVault();
-      const key = await deriveKey(user, pass, unb64(V.salt), V.iter);
-      let data;
-      try { data = await openVault(key, V); }
-      catch (er) { fails++; return authErr("Nom d'utilisateur ou mot de passe incorrect.", "#aPass"); }
-      fails = 0;
-      state = { ...clone(DEFAULT_STATE), ...data };
-      await unlocked(key, {});
+      setSync(meta.fromCache ? "offline" : "ok");
+      if (json && json !== lastPushed) {
+        lastPushed = json;
+        state = { ...clone(DEFAULT_STATE), ...JSON.parse(json), account: accountOf(user) };
+        refreshAll(); toast("Mis à jour depuis un autre appareil");
+      }
     }
-  } finally { setBusy(false); }
-};
-
-async function unlocked(key, { first = false, silent = false }) {
-  vaultKey = key; await keepSession(key);
+  }, err => { if (err && err.code === "permission-denied") authView("denied", user); else setSync("error"); });
+}
+function accountOf(u) { return { user: nameOf(u), email: u.email || "", photo: u.photoURL || "", uid: u.uid }; }
+function afterLoad(first) {
   if (!state.shop) state.shop = { days: 1, checked: {} };
   if (state.plan && state.plan.some(x => !byId(x.id))) state.plan = null;
-  $("#aPass").value = $("#aConf").value = "";
-  $$(".auth-card .input").forEach(i => i.classList.remove("bad"));
-  closeAuth(); applyTheme(); fillProfile(); renderSecurity(); renderAll();
+  closeAuth(); refreshAll();
   show(first ? "profile" : "journal");
-  if (!silent) toast(first ? "Compte créé · commence par ton profil" : `Bonjour ${state.account ? state.account.user : ""}`);
+  toast(first ? "Bienvenue · commence par ton profil" : `Bonjour ${state.account.user}`);
 }
-async function restoreSession() {
-  const V = getVault(), raw = sessionStorage.getItem(SESSION_KEY);
-  if (!V || !raw || !cryptoOK()) return false;
-  try {
-    const key = await crypto.subtle.importKey("raw", unb64(raw), { name: "AES-GCM" }, true, ["encrypt", "decrypt"]);
-    state = { ...clone(DEFAULT_STATE), ...(await openVault(key, V)) };
-    await unlocked(key, { silent: true });
-    return true;
-  } catch (e) { sessionStorage.removeItem(SESSION_KEY); return false; }
+function refreshAll() { applyTheme(); fillProfile(); renderSecurity(); renderAll(); $("#pageSub").textContent = PAGES[current][1](); }
+function onSignedOut() {
+  cloudUser = null; if (unsub) { unsub(); unsub = null; }
+  state = { ...clone(DEFAULT_STATE), theme: state.theme };
+  renderAll(); renderSecurity(); setSync("off");
+  authView("signin");
 }
-async function logout() {
-  await saveQ;
-  vaultKey = null; sessionStorage.removeItem(SESSION_KEY);
-  const theme = state.theme, user = state.account ? state.account.user : "";
-  state = { ...clone(DEFAULT_STATE), theme };
-  renderAll(); renderSecurity();
-  $("#aUser").value = user;
-  openAuth("login");
-}
-function forgotPassword() {
-  if (!confirm("Tes données sont chiffrées avec ton mot de passe : sans lui, personne (même pas moi) ne peut les récupérer.\n\nLa seule option est d'effacer le compte et toutes les données de cet appareil, puis d'en créer un nouveau. Continuer ?")) return;
-  [VAULT_KEY, SESSION_KEY, ...LEGACY_KEYS].forEach(k => { localStorage.removeItem(k); sessionStorage.removeItem(k); });
-  location.reload();
-}
+async function logout() { clearTimeout(saveTimer); await pushState(); if (cloud) await cloud.signOut(); }
 
 /* ---------- Profil > Sécurité ---------- */
 function renderSecurity() {
-  const u = state.account ? state.account.user : "";
+  const a = state.account;
+  if (!a) { $("#secGroup").innerHTML = ""; return; }
   $("#secGroup").innerHTML = `
-    <div class="set"><div class="lab">Compte<small>Connecté en tant que <b>${esc(u)}</b></small></div><div class="ctl"><span class="badge ok">Chiffré</span></div></div>
-    <div class="set"><div class="lab">Identifiants<small>Changer le nom d'utilisateur ou le mot de passe</small></div><div class="ctl"><button class="btn" data-acct="creds">Modifier</button></div></div>
-    <div class="set"><div class="lab">Session<small>Déconnexion automatique après 5 min en arrière-plan</small></div><div class="ctl"><button class="btn" data-acct="logout">${ic("lock", "sm")}Se déconnecter</button></div></div>
-    <div class="set"><div class="lab">Supprimer le compte<small>Efface le compte et toutes les données de cet appareil</small></div><div class="ctl"><button class="btn" data-acct="delete" style="color:var(--accent)">Supprimer</button></div></div>`;
+    <div class="set"><div class="lab" style="display:flex;align-items:center;gap:10px">${a.photo ? `<img class="avatar" src="${esc(a.photo)}" alt="">` : ""}<span>Compte GitHub<small>${esc(a.user)}${a.email ? " · " + esc(a.email) : ""}</small></span></div><div class="ctl"><span class="badge ok">Connecté</span></div></div>
+    <div class="set"><div class="lab">Synchronisation<small>Tes données suivent ton compte sur tous tes appareils</small></div><div class="ctl" id="syncRow"></div></div>
+    <div class="set"><div class="lab">Identifiant du compte<small class="mono">${esc(a.uid)}</small></div><div class="ctl"><button class="btn" data-acct="copyuid">${ic("copy", "sm")}Copier</button></div></div>
+    ${localStorage.getItem(LEGACY_VAULT) ? `<div class="set"><div class="lab">Carnet local de cet appareil<small>Créé avant la connexion GitHub, protégé par ton ancien mot de passe</small></div><div class="ctl"><button class="btn" data-acct="import">Importer</button></div></div>` : ""}
+    <div class="set"><div class="lab">Session<small>Déconnexion automatique après 30 min en arrière-plan</small></div><div class="ctl"><button class="btn" data-acct="logout">${ic("lock", "sm")}Se déconnecter</button></div></div>`;
+  setSync(syncState);
 }
 function accountAction(a) {
   if (a === "logout") logout();
-  else if (a === "creds") openCreds();
-  else if (a === "delete") {
-    if (!confirm("Supprimer le compte et toutes tes données (profil, journal, plans) sur cet appareil ? C'est définitif.")) return;
-    vaultKey = null;
-    [VAULT_KEY, SESSION_KEY, ...LEGACY_KEYS].forEach(k => { localStorage.removeItem(k); sessionStorage.removeItem(k); });
-    location.reload();
-  }
+  else if (a === "copyuid") { const u = state.account.uid; (navigator.clipboard ? navigator.clipboard.writeText(u) : Promise.reject()).then(() => toast("Identifiant copié"), () => prompt("Identifiant du compte", u)); }
+  else if (a === "import") openImport();
 }
-function openCreds() {
-  const u = state.account ? state.account.user : "";
-  $("#sheet").innerHTML = `<form id="credForm" style="display:contents" novalidate>
-    <div class="win-bar">${ic("lock", "sm")}<h2>Identifiants</h2><div class="end"><button type="button" class="ibtn" data-close aria-label="Fermer">${ic("x")}</button></div></div>
+
+/* ---------- Import de l'ancien carnet local chiffré ---------- */
+const unb64 = t => Uint8Array.from(atob(t), c => c.charCodeAt(0));
+async function openLegacy(user, pass) {
+  const V = JSON.parse(localStorage.getItem(LEGACY_VAULT));
+  const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(user.trim().toLowerCase() + "\u0000" + pass), "PBKDF2", false, ["deriveKey"]);
+  const key = await crypto.subtle.deriveKey({ name: "PBKDF2", salt: unb64(V.salt), iterations: V.iter, hash: "SHA-256" }, base, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+  return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: "AES-GCM", iv: unb64(V.iv) }, key, unb64(V.ct))));
+}
+function openImport() {
+  $("#sheet").innerHTML = `<form id="impForm" style="display:contents" novalidate>
+    <div class="win-bar">${ic("cloud", "sm")}<h2>Importer le carnet local</h2><div class="end"><button type="button" class="ibtn" data-close aria-label="Fermer">${ic("x")}</button></div></div>
     <div class="win-body form-grid">
-      <label class="field"><span>Nom d'utilisateur</span><input class="input" id="cUser" autocomplete="username" autocapitalize="none" spellcheck="false" value="${esc(u)}"></label>
-      <label class="field"><span>Mot de passe actuel</span><input class="input" id="cOld" type="password" autocomplete="current-password"></label>
-      <label class="field"><span>Nouveau mot de passe <span class="t3">(laisse vide pour le garder)</span></span><input class="input" id="cNew" type="password" autocomplete="new-password"></label>
-      <label class="field"><span>Confirmer le nouveau mot de passe</span><input class="input" id="cConf" type="password" autocomplete="new-password"></label>
-      <p id="cMsg" style="font-size:12.5px;color:var(--text-2)">Tes données seront rechiffrées avec les nouveaux identifiants.</p>
+      <p class="t2" style="font-size:12.5px">Entre le nom d'utilisateur et le mot de passe que tu avais créés sur cet appareil. Le journal, le profil et le plan remplaceront ceux de ton compte.</p>
+      <label class="field"><span>Ancien nom d'utilisateur</span><input class="input" id="iUser" autocapitalize="none" spellcheck="false"></label>
+      <label class="field"><span>Ancien mot de passe</span><input class="input" id="iPass" type="password" autocomplete="current-password"></label>
+      <p id="iMsg" style="font-size:12.5px;color:var(--accent)"></p>
     </div>
-    <div class="win-foot"><button type="button" class="btn" data-close>Annuler</button><button class="btn pri" type="submit" id="cSave">Enregistrer</button></div></form>`;
+    <div class="win-foot"><button type="button" class="btn" data-close>Annuler</button><button class="btn pri" type="submit" id="iGo">Importer</button></div></form>`;
   openModal();
-  $("#credForm").onsubmit = saveCreds;
-}
-async function saveCreds(e) {
-  e.preventDefault();
-  const msg = t => { $("#cMsg").textContent = t; $("#cMsg").style.color = "var(--accent)"; };
-  const V = getVault(), oldUser = state.account ? state.account.user : "";
-  const nu = $("#cUser").value.trim(), op = $("#cOld").value, newPw = $("#cNew").value, np = newPw || op;
-  if (nu.length < 3) return msg("Nom d'utilisateur : 3 caractères minimum.");
-  if (!op) return msg("Entre ton mot de passe actuel.");
-  if (newPw && newPw.length < 8) return msg("Nouveau mot de passe : 8 caractères minimum.");
-  if (newPw && newPw !== $("#cConf").value) return msg("Les deux nouveaux mots de passe sont différents.");
-  const btn = $("#cSave"); btn.disabled = true; btn.innerHTML = `<span class="spin"></span>Chiffrement…`;
-  try {
-    const oldKey = await deriveKey(oldUser, op, unb64(V.salt), V.iter);
-    try { await openVault(oldKey, V); } catch (er) { return msg("Mot de passe actuel incorrect."); }
-    await saveQ;
-    const salt = crypto.getRandomValues(new Uint8Array(16));
-    const key = await deriveKey(nu, np, salt, ITER);
-    state.account = { ...(state.account || {}), user: nu };
-    await sealState(key, salt, ITER);
-    vaultKey = key; await keepSession(key);
-    closeModal(); renderSecurity(); toast("Identifiants mis à jour");
-  } finally { if (document.body.contains(btn)) { btn.disabled = false; btn.textContent = "Enregistrer"; } }
+  $("#impForm").onsubmit = async e => {
+    e.preventDefault();
+    const b = $("#iGo"); b.disabled = true; b.innerHTML = `<span class="spin"></span>Déchiffrement…`;
+    try {
+      const data = await openLegacy($("#iUser").value, $("#iPass").value);
+      state = { ...clone(DEFAULT_STATE), ...data, account: state.account, theme: state.theme };
+      localStorage.removeItem(LEGACY_VAULT);
+      closeModal(); refreshAll(); pushState(true); toast("Carnet importé dans ton compte");
+    } catch (er) { $("#iMsg").textContent = "Identifiants incorrects."; b.disabled = false; b.textContent = "Importer"; }
+  };
 }
 
 let hiddenAt = 0;
 document.addEventListener("visibilitychange", () => {
-  if (document.hidden) hiddenAt = Date.now();
-  else if (hiddenAt && vaultKey && Date.now() - hiddenAt > AUTO_LOCK_MS) logout();
+  if (document.hidden) { hiddenAt = Date.now(); if (cloudUser) { clearTimeout(saveTimer); pushState(); } }
+  else if (hiddenAt && cloudUser && Date.now() - hiddenAt > AUTO_LOCK_MS) logout();
 });
 $("#lockBtn").onclick = logout;
 
@@ -1868,7 +1872,7 @@ setInterval(() => { if (dKey() !== lastDay) { lastDay = dKey(); renderAll(); } }
 /* ---------- Init ---------- */
 try { const ui = JSON.parse(localStorage.getItem(UI_KEY)); if (ui && ui.theme) state.theme = ui.theme; } catch (e) {}
 applyTheme(); renderCats(); renderRecipes(); fillProfile(); renderSecurity(); renderAll(); show("journal");
-(async () => { if (!(await restoreSession())) openAuth(getVault() ? "login" : "create"); })();
+startCloud();
 </script>
 </body>
 </html>
