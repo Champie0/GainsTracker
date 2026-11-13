@@ -14,7 +14,7 @@ Carnet de prise de masse, en un seul fichier HTML, qui fonctionne hors ligne.
 
 ## Données et accès
 
-L'app est protégée par un code à 4 chiffres, créé au premier lancement sur chaque appareil (seul un hachage SHA-256 salé est stocké). Elle se reverrouille après 5 minutes en arrière-plan.
+Connexion par **nom d'utilisateur + mot de passe**. Ces identifiants ne sont stockés nulle part : ils servent à dériver une clé (PBKDF2-SHA256, 310 000 itérations, sel aléatoire) qui chiffre toutes les données en **AES-256-GCM** dans le navigateur. Un mauvais identifiant rend le déchiffrement impossible. Déconnexion automatique après 5 minutes en arrière-plan.
 
 
 Tout est enregistré dans le navigateur (localStorage) de l'appareil utilisé. Rien n'est envoyé sur un serveur.

@@ -46,6 +46,7 @@
   --noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
 html{background:var(--bg)}
 body{font-family:var(--font);font-size:14px;line-height:1.45;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased;min-height:100vh}
 button,input,select,textarea{font:inherit;color:inherit}
@@ -383,6 +384,28 @@ button.th:hover{color:var(--text)}
 .linkb:hover{color:var(--text)}
 @media (max-width:700px){.metric .row1{flex-direction:column;align-items:flex-start;gap:10px}.metric .ring svg{width:58px;height:58px}.metric .big small{display:block;margin:2px 0 0}}
 
+/* ---- Connexion ---- */
+.auth-card{width:min(380px,calc(100vw - 32px));text-align:left;padding:30px 26px 20px}
+.auth-card .app-icon{margin:0 auto 14px}
+.auth-card h2,.auth-card>p{text-align:center}
+.auth-card>p{min-height:0;margin-bottom:2px}
+.auth-fields{display:grid;gap:12px;margin:18px 0 16px}
+.auth-card .input{height:42px;font-size:16px;background:var(--field)}
+.pw{position:relative;display:block}
+.pw .input{padding-right:42px}
+.pw .ibtn{position:absolute;right:6px;top:50%;transform:translateY(-50%)}
+.pw .ibtn[aria-pressed="true"]{color:var(--accent)}
+.strength{height:4px;border-radius:2px;background:var(--hover);overflow:hidden;margin-top:-4px}
+.strength i{display:block;height:100%;width:0;border-radius:2px;transition:width var(--t),background var(--t)}
+.strength-l{font-size:11.5px;color:var(--text-2);margin-top:4px}
+.auth-card.err{animation:shake 380ms}
+.auth-card .input.bad{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.auth-foot{text-align:center;margin-top:12px;min-height:18px}
+.secure-note{display:flex;gap:8px;align-items:flex-start;font-size:11.5px;line-height:1.45;color:var(--text-2);margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.secure-note .ic{margin-top:1px;flex:0 0 auto;color:var(--olive)}
+.spin{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;animation:rot 700ms linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+
 /* ============================================================
    RESPONSIVE
    ============================================================ */
@@ -515,7 +538,7 @@ button.th:hover{color:var(--text)}
   </nav>
   <div class="sb-status" id="sbStatus"></div>
   <div class="sb-foot">
-    <button class="ibtn" id="lockBtn" data-tip="Verrouiller" data-tip-pos="right" aria-label="Verrouiller l'app"><svg class="ic"><use href="#i-lock"/></svg></button>
+    <button class="ibtn" id="lockBtn" data-tip="Se déconnecter" data-tip-pos="right" aria-label="Se déconnecter"><svg class="ic"><use href="#i-lock"/></svg></button>
     <button class="ibtn" id="themeBtn" data-tip="Thème" data-tip-pos="right" aria-label="Changer de thème"></button>
   </div>
 </aside>
@@ -718,7 +741,7 @@ button.th:hover{color:var(--text)}
           <div class="surface panel">
             <div class="panel-head"><h2>Données</h2></div>
             <div class="panel-body">
-              <p class="t2" style="font-size:12.5px;margin-bottom:12px">Tout est enregistré dans ce navigateur, rien n'est envoyé.</p>
+              <p class="t2" style="font-size:12.5px;margin-bottom:12px">Tes données sont chiffrées (AES-256) dans ce navigateur. Rien n'est envoyé sur internet.</p>
               <div style="display:flex;gap:8px;flex-wrap:wrap">
                 <button class="btn" id="resetToday">Vider le jour</button>
                 <button class="btn" id="resetAll" style="color:var(--accent)">Tout réinitialiser</button>
@@ -740,15 +763,25 @@ button.th:hover{color:var(--text)}
   <button data-v="profile"><svg class="ic"><use href="#i-user"/></svg>Profil</button>
 </nav>
 
-<div class="lock" id="lock" role="dialog" aria-modal="true" aria-labelledby="lockTitle">
-  <div class="lock-card glass">
+<div class="lock" id="auth" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+  <form class="lock-card auth-card glass" id="authForm" novalidate>
     <div class="app-icon" aria-hidden="true">G</div>
-    <h2 id="lockTitle">GainsTracker</h2>
-    <p id="lockMsg" aria-live="polite"></p>
-    <div class="dots" id="lockDots" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-    <div class="pad" id="pad"></div>
-    <div class="lock-foot" id="lockFoot"></div>
-  </div>
+    <h2 id="authTitle">GainsTracker</h2>
+    <p id="authMsg" aria-live="polite"></p>
+    <div class="auth-fields">
+      <label class="field"><span>Nom d'utilisateur</span>
+        <input class="input" id="aUser" name="username" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false"></label>
+      <label class="field"><span>Mot de passe</span>
+        <span class="pw"><input class="input" id="aPass" name="password" type="password" autocomplete="current-password">
+        <button type="button" class="ibtn" id="aEye" aria-label="Afficher le mot de passe" aria-pressed="false"><svg class="ic sm"><use href="#i-eye"/></svg></button></span></label>
+      <div id="aStrengthWrap" hidden><div class="strength"><i id="aStrength"></i></div><div class="strength-l" id="aStrengthL"></div></div>
+      <label class="field" id="aConfWrap" hidden><span>Confirmer le mot de passe</span>
+        <input class="input" id="aConf" name="password-confirm" type="password" autocomplete="new-password"></label>
+    </div>
+    <button class="btn pri full lg" id="aSubmit" type="submit">Se connecter</button>
+    <div class="auth-foot" id="authFoot"></div>
+    <div class="secure-note"><svg class="ic sm"><use href="#i-lock"/></svg><span>Ton nom d'utilisateur et ton mot de passe ne sont stockés nulle part. Ils servent de clé pour chiffrer tes données (AES-256) sur cet appareil.</span></div>
+  </form>
 </div>
 <div class="ctx glass" id="ctx" role="menu"></div>
 <div class="modal" id="modal"><div class="window glass" id="sheet" role="dialog" aria-modal="true"></div></div>
@@ -1048,14 +1081,15 @@ const DEFAULT_STATE = {
   journal: {}, plan: null, shop: { days: 1, checked: {} }, theme: "papier"
 };
 const clone = o => JSON.parse(JSON.stringify(o));
-function load() {
-  try { const s = JSON.parse(localStorage.getItem(LS_KEY)); if (s && s.profile) return { ...clone(DEFAULT_STATE), ...s }; } catch (e) {}
-  return clone(DEFAULT_STATE);
+// Les données ne sont jamais écrites en clair : save() chiffre l'état
+// avec la clé dérivée des identifiants (voir section 12).
+let vaultKey = null, saveQ = Promise.resolve();
+function save() {
+  if (!vaultKey) return;
+  const key = vaultKey;
+  saveQ = saveQ.then(() => sealState(key)).catch(() => {});
 }
-function save() { try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) {} }
-let state = load();
-if (!state.shop) state.shop = { days: 1, checked: {} };
-if (state.plan && state.plan.some(x => !RECIPES.find(r => r.id === x.id))) state.plan = null;
+let state = clone(DEFAULT_STATE);
 
 /* =====================================================================
    3. UTILITAIRES
@@ -1126,6 +1160,7 @@ function applyTheme() {
   $('meta[name="theme-color"]').content = state.theme === "encre" ? "#12100E" : "#E9E3D8";
   $("#themeBtn").innerHTML = ic(state.theme === "encre" ? "sun" : "moon");
   $("#themeBtn").dataset.tip = state.theme === "encre" ? "Thème clair" : "Thème sombre";
+  try { localStorage.setItem("gt:ui", JSON.stringify({ theme: state.theme })); } catch (e) {}
 }
 function renderStatus() {
   const T = targets(), D = dayTotals();
@@ -1495,11 +1530,10 @@ function renderAll() { renderStatus(); renderJournal(); renderPlan(); }
 
 document.addEventListener("click", e => {
   if (!e.target.closest("#ctx") && !e.target.closest("[data-entrymenu],[data-slotmenu]")) closeCtx();
-  const t = e.target.closest("[data-ctx],[data-v],[data-cat],[data-sort],[data-rcp],[data-addrcp],[data-close],[data-entrymenu],[data-slotmenu],[data-swap],[data-eat],[data-quick],[data-adj],[data-shopdays],[data-shopchk],[data-s],#genBtn,#regenBtn,#shopBtn,#shopCopy,#shopReset,#clearFilters,[data-lock],[data-pin]");
+  const t = e.target.closest("[data-ctx],[data-v],[data-cat],[data-sort],[data-rcp],[data-addrcp],[data-close],[data-entrymenu],[data-slotmenu],[data-swap],[data-eat],[data-quick],[data-adj],[data-shopdays],[data-shopchk],[data-s],#genBtn,#regenBtn,#shopBtn,#shopCopy,#shopReset,#clearFilters,[data-acct]");
   if (!t) { if (e.target.id === "modal") closeModal(); return; }
   const d = t.dataset;
-  if (d.pin) pinPress(d.pin);
-  else if (d.lock) lockAction(d.lock);
+  if (d.acct) accountAction(d.acct);
   else if (d.ctx) { closeCtx(); ctxActions[+d.ctx](); }
   else if (d.v) show(d.v);
   else if (d.cat) { rf.cat = d.cat; renderCats(); renderRecipes(); }
@@ -1547,12 +1581,7 @@ document.addEventListener("click", e => {
 });
 
 document.addEventListener("keydown", e => {
-  if ($("#lock").classList.contains("on")) {
-    if (/^[0-9]$/.test(e.key)) { e.preventDefault(); pinPress(e.key); }
-    else if (e.key === "Backspace") { e.preventDefault(); pinPress("del"); }
-    else if (e.key === "Escape" && lockCancelable) closeLock();
-    return;
-  }
+  if ($("#auth").classList.contains("on")) return;
   const ctxOn = $("#ctx").classList.contains("on");
   if (e.key === "Escape") { if (ctxOn) closeCtx(); else closeModal(); return; }
   if (ctxOn && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
@@ -1607,123 +1636,239 @@ $("#pPk").oninput = e => $("#protLbl").textContent = (+e.target.value).toFixed(1
 $("#saveProfile").onclick = saveProfile;
 $("#saveProfileTb").onclick = saveProfile;
 $("#resetToday").onclick = () => { if (confirm("Vider le journal d'aujourd'hui ?")) { delete state.journal[dKey()]; save(); renderAll(); } };
-$("#resetAll").onclick = () => { if (confirm("Tout effacer : profil, journal et plan ?")) { state = clone(DEFAULT_STATE); save(); applyTheme(); fillProfile(); renderAll(); } };
+$("#resetAll").onclick = () => { if (confirm("Tout effacer : profil, journal et plan ?")) { state = { ...clone(DEFAULT_STATE), account: state.account, theme: state.theme }; save(); applyTheme(); fillProfile(); renderAll(); } };
 
 
 /* =====================================================================
-   12. VERROUILLAGE PAR CODE (par appareil)
-   Le code n'est jamais stocké en clair : seul un hachage SHA-256 salé l'est.
+   12. AUTHENTIFICATION & CHIFFREMENT
+   - Aucun identifiant n'est stocké : nom d'utilisateur + mot de passe
+     → PBKDF2-SHA256 (310 000 itérations, sel aléatoire) → clé AES-256-GCM.
+   - Tout l'état (profil, journal, plan…) est chiffré avec cette clé.
+     Un mauvais identifiant = déchiffrement impossible (tag GCM invalide).
+   - La clé vit en mémoire ; une copie de session (onglet courant) évite
+     de se reconnecter à chaque rechargement, effacée à la déconnexion.
    ===================================================================== */
-const LOCK_KEY = "gainstracker_lock";
-const LOCK_AFTER_MS = 5 * 60 * 1000;   // reverrouille après 5 min en arrière-plan
-let lockMode = null, lockCancelable = false, pinBuf = "", firstPin = "", pinBusy = false;
-const lockData = () => { try { return JSON.parse(localStorage.getItem(LOCK_KEY)); } catch (e) { return null; } };
-async function hashPin(pin, salt) {
-  const txt = salt + ":" + pin;
-  if (window.crypto && crypto.subtle) {
-    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(txt));
-    return [...new Uint8Array(buf)].map(x => x.toString(16).padStart(2, "0")).join("");
-  }
-  let h = 5381; for (let r = 0; r < 4000; r++) for (const ch of txt + r) h = ((h << 5) + h + ch.charCodeAt(0)) | 0;
-  return "x" + (h >>> 0).toString(16);
+const VAULT_KEY = "gt:v1", SESSION_KEY = "gt:s", UI_KEY = "gt:ui";
+const LEGACY_KEYS = [LS_KEY, "gainstracker_lock"];
+const ITER = 310000, AUTO_LOCK_MS = 5 * 60 * 1000;
+const te = new TextEncoder(), td = new TextDecoder();
+let authMode = null, authBusy = false, fails = 0;
+const b64 = u8 => { let x = ""; for (let i = 0; i < u8.length; i += 0x8000) x += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(x); };
+const unb64 = t => Uint8Array.from(atob(t), c => c.charCodeAt(0));
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const getVault = () => { try { return JSON.parse(localStorage.getItem(VAULT_KEY)); } catch (e) { return null; } };
+const cryptoOK = () => !!(window.crypto && crypto.subtle && window.isSecureContext !== false);
+
+async function deriveKey(user, pass, salt, iter) {
+  const base = await crypto.subtle.importKey("raw", te.encode(user.trim().toLowerCase() + "\u0000" + pass), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: iter, hash: "SHA-256" }, base, { name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]);
 }
-const LOCK_TXT = {
-  create:       ["Crée ton code", "4 chiffres. Il protège ton journal et ton profil sur cet appareil."],
-  confirm:      ["Confirme ton code", "Tape-le une deuxième fois."],
-  unlock:       ["GainsTracker", "Entre ton code pour continuer."],
-  verifyChange: ["Code actuel", "Entre ton code actuel pour le changer."],
-  verifyOff:    ["Code actuel", "Entre ton code pour désactiver le verrouillage."]
+async function sealState(key, salt, iter) {
+  const V = getVault();
+  salt = salt || unb64(V.salt); iter = iter || V.iter;
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, te.encode(JSON.stringify(state))));
+  localStorage.setItem(VAULT_KEY, JSON.stringify({ v: 1, iter, salt: b64(salt), iv: b64(iv), ct: b64(ct) }));
+}
+async function openVault(key, V) {
+  return JSON.parse(td.decode(await crypto.subtle.decrypt({ name: "AES-GCM", iv: unb64(V.iv) }, key, unb64(V.ct))));
+}
+async function keepSession(key) {
+  try { sessionStorage.setItem(SESSION_KEY, b64(new Uint8Array(await crypto.subtle.exportKey("raw", key)))); } catch (e) {}
+}
+
+/* ---------- Écran de connexion ---------- */
+const AUTH_TXT = {
+  create: ["Crée ton compte", "Choisis un nom d'utilisateur et un mot de passe pour protéger ton carnet.", "Créer le compte"],
+  login:  ["Connexion", "Connecte-toi pour ouvrir ton carnet.", "Se connecter"]
 };
-function buildPad() {
-  const keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "cancel", "0", "del"];
-  $("#pad").innerHTML = keys.map(k => k === "cancel" ? `<button class="ghost" id="padCancel" type="button"></button>`
-    : k === "del" ? `<button class="ghost" data-pin="del" type="button" aria-label="Effacer">${ic("del")}</button>`
-    : `<button data-pin="${k}" type="button">${k}</button>`).join("");
-  $("#padCancel").onclick = () => { if (lockCancelable) closeLock(); };
+function openAuth(mode) {
+  authMode = mode;
+  const [t, m, b] = AUTH_TXT[mode];
+  $("#authTitle").textContent = t; setAuthMsg(m);
+  $("#aSubmit").textContent = b;
+  $("#aConfWrap").hidden = $("#aStrengthWrap").hidden = mode !== "create";
+  $("#aPass").autocomplete = mode === "create" ? "new-password" : "current-password";
+  $("#authFoot").innerHTML = mode === "login" ? `<button class="linkb" type="button" id="forgot">Mot de passe oublié ?</button>` : "";
+  if (mode === "login") $("#forgot").onclick = forgotPassword;
+  if (!cryptoOK()) { setAuthMsg("Le chiffrement demande une connexion sécurisée. Ouvre l'app depuis son adresse https.", true); $("#aSubmit").disabled = true; }
+  closeCtx(); closeModal();
+  $("#auth").classList.add("on"); document.body.style.overflow = "hidden";
+  setTimeout(() => $(mode === "login" && $("#aUser").value ? "#aPass" : "#aUser").focus(), 60);
 }
-function renderLock(err) {
-  const [t, m] = LOCK_TXT[lockMode];
-  $("#lockTitle").textContent = t;
-  $("#lockMsg").textContent = err || m;
-  $("#lockMsg").style.color = err ? "var(--accent)" : "";
-  $$("#lockDots i").forEach((d, i) => d.classList.toggle("on", i < pinBuf.length));
-  $("#padCancel").textContent = lockCancelable ? "Annuler" : "";
-  $("#lockFoot").innerHTML = lockMode === "unlock" ? `<button class="linkb" id="forgotPin" type="button">Code oublié ?</button>` : "";
-  const f = $("#forgotPin");
-  if (f) f.onclick = () => {
-    if (confirm("Sans le code, la seule option est d'effacer toutes les données de l'app sur cet appareil (profil, journal, plan). Continuer ?")) {
-      localStorage.removeItem(LS_KEY); localStorage.removeItem(LOCK_KEY); sessionStorage.clear(); location.reload();
-    }
-  };
+function closeAuth() { $("#auth").classList.remove("on"); document.body.style.overflow = ""; }
+function setAuthMsg(t, err) { const m = $("#authMsg"); m.textContent = t; m.style.color = err ? "var(--accent)" : ""; }
+function authErr(msg, field) {
+  setAuthMsg(msg, true);
+  const c = $("#authForm"); c.classList.remove("err"); void c.offsetWidth; c.classList.add("err");
+  $$(".auth-card .input").forEach(i => i.classList.remove("bad"));
+  if (field) { $(field).classList.add("bad"); $(field).focus(); }
 }
-function openLock(mode, cancelable = false) {
-  lockMode = mode; lockCancelable = cancelable; pinBuf = ""; firstPin = mode === "confirm" ? firstPin : "";
-  closeCtx(); closeModal(); renderLock();
-  $("#lock").classList.add("on"); document.body.style.overflow = "hidden";
+function setBusy(on) {
+  authBusy = on; const b = $("#aSubmit"); b.disabled = on;
+  b.innerHTML = on ? `<span class="spin"></span>${authMode === "create" ? "Chiffrement…" : "Vérification…"}` : AUTH_TXT[authMode][2];
 }
-function closeLock() { $("#lock").classList.remove("on"); document.body.style.overflow = ""; pinBuf = ""; }
-function lockShake(msg) {
-  pinBuf = ""; renderLock(msg);
-  const d = $("#lockDots"); d.classList.remove("err"); void d.offsetWidth; d.classList.add("err");
-  if (navigator.vibrate) navigator.vibrate(70);
+function strength(pw) {
+  let sc = 0;
+  if (pw.length >= 8) sc++; if (pw.length >= 12) sc++;
+  if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) sc++; if (/\d/.test(pw)) sc++; if (/[^\w]/.test(pw)) sc++;
+  return sc;
 }
-async function pinPress(k) {
-  if (pinBusy) return;
-  if (k === "del") { pinBuf = pinBuf.slice(0, -1); renderLock(); return; }
-  if (pinBuf.length >= 4) return;
-  pinBuf += k; renderLock();
-  if (pinBuf.length < 4) return;
-  pinBusy = true;
-  const pin = pinBuf;
-  await new Promise(r => setTimeout(r, 140));
+$("#aPass").addEventListener("input", e => {
+  e.target.classList.remove("bad");
+  if (authMode !== "create") return;
+  const v = e.target.value, sc = strength(v);
+  const lv = !v ? ["", 0, "var(--hover)"] : sc <= 2 ? ["Faible", 30, "var(--accent)"] : sc <= 3 ? ["Correct", 62, "#C8892B"] : ["Solide", 100, "var(--olive)"];
+  $("#aStrength").style.width = lv[1] + "%"; $("#aStrength").style.background = lv[2];
+  $("#aStrengthL").textContent = v ? `Mot de passe ${lv[0].toLowerCase()}${v.length < 8 ? " · 8 caractères minimum" : ""}` : "8 caractères minimum";
+});
+["#aUser", "#aConf"].forEach(f => $(f).addEventListener("input", e => e.target.classList.remove("bad")));
+$("#aEye").onclick = () => {
+  const show = $("#aPass").type === "password";
+  ["#aPass", "#aConf"].forEach(f => $(f).type = show ? "text" : "password");
+  $("#aEye").setAttribute("aria-pressed", show); $("#aEye").setAttribute("aria-label", show ? "Masquer le mot de passe" : "Afficher le mot de passe");
+};
+
+$("#authForm").onsubmit = async e => {
+  e.preventDefault();
+  if (authBusy || !cryptoOK()) return;
+  const user = $("#aUser").value.trim(), pass = $("#aPass").value;
+  if (user.length < 3) return authErr("Nom d'utilisateur : 3 caractères minimum.", "#aUser");
+  if (authMode === "create") {
+    if (pass.length < 8) return authErr("Mot de passe : 8 caractères minimum.", "#aPass");
+    if (pass !== $("#aConf").value) return authErr("Les deux mots de passe sont différents.", "#aConf");
+  } else if (!pass) return authErr("Entre ton mot de passe.", "#aPass");
+  setBusy(true);
   try {
-    if (lockMode === "create") { firstPin = pin; lockMode = "confirm"; pinBuf = ""; renderLock(); }
-    else if (lockMode === "confirm") {
-      if (pin !== firstPin) { lockMode = "create"; firstPin = ""; lockShake("Les deux codes sont différents. Recommence."); return; }
-      const salt = uid() + uid();
-      localStorage.setItem(LOCK_KEY, JSON.stringify({ salt, hash: await hashPin(pin, salt) }));
-      sessionStorage.setItem("gt_unlocked", "1");
-      closeLock(); renderSecurity(); toast("Code enregistré");
+    if (authMode === "create") {
+      const salt = crypto.getRandomValues(new Uint8Array(16));
+      const key = await deriveKey(user, pass, salt, ITER);
+      let legacy = null; try { legacy = JSON.parse(localStorage.getItem(LS_KEY)); } catch (er) {}
+      state = legacy && legacy.profile ? { ...clone(DEFAULT_STATE), ...legacy } : { ...clone(DEFAULT_STATE), theme: state.theme };
+      state.account = { user, created: Date.now() };
+      await sealState(key, salt, ITER);
+      LEGACY_KEYS.forEach(k => localStorage.removeItem(k));   // plus aucune donnée en clair
+      await unlocked(key, { first: !legacy });
     } else {
-      const L = lockData();
-      if (!L || await hashPin(pin, L.salt) !== L.hash) { lockShake("Code incorrect."); return; }
-      if (lockMode === "unlock") { sessionStorage.setItem("gt_unlocked", "1"); closeLock(); }
-      else if (lockMode === "verifyChange") { lockMode = "create"; pinBuf = ""; renderLock(); }
-      else if (lockMode === "verifyOff") { localStorage.removeItem(LOCK_KEY); closeLock(); renderSecurity(); toast("Verrouillage désactivé"); }
+      if (fails >= 3) { setAuthMsg("Patiente un instant…"); await sleep(Math.min(15000, 1000 * 2 ** (fails - 3))); }
+      const V = getVault();
+      const key = await deriveKey(user, pass, unb64(V.salt), V.iter);
+      let data;
+      try { data = await openVault(key, V); }
+      catch (er) { fails++; return authErr("Nom d'utilisateur ou mot de passe incorrect.", "#aPass"); }
+      fails = 0;
+      state = { ...clone(DEFAULT_STATE), ...data };
+      await unlocked(key, {});
     }
-  } finally { pinBusy = false; }
+  } finally { setBusy(false); }
+};
+
+async function unlocked(key, { first = false, silent = false }) {
+  vaultKey = key; await keepSession(key);
+  if (!state.shop) state.shop = { days: 1, checked: {} };
+  if (state.plan && state.plan.some(x => !byId(x.id))) state.plan = null;
+  $("#aPass").value = $("#aConf").value = "";
+  $$(".auth-card .input").forEach(i => i.classList.remove("bad"));
+  closeAuth(); applyTheme(); fillProfile(); renderSecurity(); renderAll();
+  show(first ? "profile" : "journal");
+  if (!silent) toast(first ? "Compte créé · commence par ton profil" : `Bonjour ${state.account ? state.account.user : ""}`);
 }
-function lockNow() { if (!lockData()) { openLock("create", true); return; } sessionStorage.removeItem("gt_unlocked"); openLock("unlock"); }
-function lockAction(a) {
-  if (a === "now") lockNow();
-  else if (a === "change") openLock("verifyChange", true);
-  else if (a === "off") openLock("verifyOff", true);
-  else if (a === "create") openLock("create", true);
+async function restoreSession() {
+  const V = getVault(), raw = sessionStorage.getItem(SESSION_KEY);
+  if (!V || !raw || !cryptoOK()) return false;
+  try {
+    const key = await crypto.subtle.importKey("raw", unb64(raw), { name: "AES-GCM" }, true, ["encrypt", "decrypt"]);
+    state = { ...clone(DEFAULT_STATE), ...(await openVault(key, V)) };
+    await unlocked(key, { silent: true });
+    return true;
+  } catch (e) { sessionStorage.removeItem(SESSION_KEY); return false; }
 }
+async function logout() {
+  await saveQ;
+  vaultKey = null; sessionStorage.removeItem(SESSION_KEY);
+  const theme = state.theme, user = state.account ? state.account.user : "";
+  state = { ...clone(DEFAULT_STATE), theme };
+  renderAll(); renderSecurity();
+  $("#aUser").value = user;
+  openAuth("login");
+}
+function forgotPassword() {
+  if (!confirm("Tes données sont chiffrées avec ton mot de passe : sans lui, personne (même pas moi) ne peut les récupérer.\n\nLa seule option est d'effacer le compte et toutes les données de cet appareil, puis d'en créer un nouveau. Continuer ?")) return;
+  [VAULT_KEY, SESSION_KEY, ...LEGACY_KEYS].forEach(k => { localStorage.removeItem(k); sessionStorage.removeItem(k); });
+  location.reload();
+}
+
+/* ---------- Profil > Sécurité ---------- */
 function renderSecurity() {
-  const L = lockData();
+  const u = state.account ? state.account.user : "";
   $("#secGroup").innerHTML = `
-    <div class="set"><div class="lab">Verrouillage par code<small>${L ? "Le code est demandé à chaque ouverture." : "N'importe qui avec cet appareil peut ouvrir l'app."}</small></div>
-      <div class="ctl">${L ? `<span class="badge ok">Actif</span>` : `<span class="badge idle">Désactivé</span>`}</div></div>` +
-    (L ? `<div class="set"><div class="lab">Code</div><div class="ctl"><button class="btn" data-lock="change">Changer</button><button class="btn" data-lock="now">${ic("lock", "sm")}Verrouiller</button></div></div>
-          <div class="set"><div class="lab">Désactiver le verrouillage</div><div class="ctl"><button class="btn" data-lock="off" style="color:var(--accent)">Désactiver</button></div></div>`
-       : `<div class="set"><div class="lab">Protéger l'app par un code</div><div class="ctl"><button class="btn pri" data-lock="create">${ic("lock", "sm")}Activer</button></div></div>`);
+    <div class="set"><div class="lab">Compte<small>Connecté en tant que <b>${esc(u)}</b></small></div><div class="ctl"><span class="badge ok">Chiffré</span></div></div>
+    <div class="set"><div class="lab">Identifiants<small>Changer le nom d'utilisateur ou le mot de passe</small></div><div class="ctl"><button class="btn" data-acct="creds">Modifier</button></div></div>
+    <div class="set"><div class="lab">Session<small>Déconnexion automatique après 5 min en arrière-plan</small></div><div class="ctl"><button class="btn" data-acct="logout">${ic("lock", "sm")}Se déconnecter</button></div></div>
+    <div class="set"><div class="lab">Supprimer le compte<small>Efface le compte et toutes les données de cet appareil</small></div><div class="ctl"><button class="btn" data-acct="delete" style="color:var(--accent)">Supprimer</button></div></div>`;
 }
+function accountAction(a) {
+  if (a === "logout") logout();
+  else if (a === "creds") openCreds();
+  else if (a === "delete") {
+    if (!confirm("Supprimer le compte et toutes tes données (profil, journal, plans) sur cet appareil ? C'est définitif.")) return;
+    vaultKey = null;
+    [VAULT_KEY, SESSION_KEY, ...LEGACY_KEYS].forEach(k => { localStorage.removeItem(k); sessionStorage.removeItem(k); });
+    location.reload();
+  }
+}
+function openCreds() {
+  const u = state.account ? state.account.user : "";
+  $("#sheet").innerHTML = `<form id="credForm" style="display:contents" novalidate>
+    <div class="win-bar">${ic("lock", "sm")}<h2>Identifiants</h2><div class="end"><button type="button" class="ibtn" data-close aria-label="Fermer">${ic("x")}</button></div></div>
+    <div class="win-body form-grid">
+      <label class="field"><span>Nom d'utilisateur</span><input class="input" id="cUser" autocomplete="username" autocapitalize="none" spellcheck="false" value="${esc(u)}"></label>
+      <label class="field"><span>Mot de passe actuel</span><input class="input" id="cOld" type="password" autocomplete="current-password"></label>
+      <label class="field"><span>Nouveau mot de passe <span class="t3">(laisse vide pour le garder)</span></span><input class="input" id="cNew" type="password" autocomplete="new-password"></label>
+      <label class="field"><span>Confirmer le nouveau mot de passe</span><input class="input" id="cConf" type="password" autocomplete="new-password"></label>
+      <p id="cMsg" style="font-size:12.5px;color:var(--text-2)">Tes données seront rechiffrées avec les nouveaux identifiants.</p>
+    </div>
+    <div class="win-foot"><button type="button" class="btn" data-close>Annuler</button><button class="btn pri" type="submit" id="cSave">Enregistrer</button></div></form>`;
+  openModal();
+  $("#credForm").onsubmit = saveCreds;
+}
+async function saveCreds(e) {
+  e.preventDefault();
+  const msg = t => { $("#cMsg").textContent = t; $("#cMsg").style.color = "var(--accent)"; };
+  const V = getVault(), oldUser = state.account ? state.account.user : "";
+  const nu = $("#cUser").value.trim(), op = $("#cOld").value, newPw = $("#cNew").value, np = newPw || op;
+  if (nu.length < 3) return msg("Nom d'utilisateur : 3 caractères minimum.");
+  if (!op) return msg("Entre ton mot de passe actuel.");
+  if (newPw && newPw.length < 8) return msg("Nouveau mot de passe : 8 caractères minimum.");
+  if (newPw && newPw !== $("#cConf").value) return msg("Les deux nouveaux mots de passe sont différents.");
+  const btn = $("#cSave"); btn.disabled = true; btn.innerHTML = `<span class="spin"></span>Chiffrement…`;
+  try {
+    const oldKey = await deriveKey(oldUser, op, unb64(V.salt), V.iter);
+    try { await openVault(oldKey, V); } catch (er) { return msg("Mot de passe actuel incorrect."); }
+    await saveQ;
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const key = await deriveKey(nu, np, salt, ITER);
+    state.account = { ...(state.account || {}), user: nu };
+    await sealState(key, salt, ITER);
+    vaultKey = key; await keepSession(key);
+    closeModal(); renderSecurity(); toast("Identifiants mis à jour");
+  } finally { if (document.body.contains(btn)) { btn.disabled = false; btn.textContent = "Enregistrer"; } }
+}
+
 let hiddenAt = 0;
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) hiddenAt = Date.now();
-  else if (hiddenAt && lockData() && Date.now() - hiddenAt > LOCK_AFTER_MS && !$("#lock").classList.contains("on")) lockNow();
+  else if (hiddenAt && vaultKey && Date.now() - hiddenAt > AUTO_LOCK_MS) logout();
 });
-$("#lockBtn").onclick = lockNow;
+$("#lockBtn").onclick = logout;
 
 let lastDay = dKey();
 setInterval(() => { if (dKey() !== lastDay) { lastDay = dKey(); renderAll(); } }, 60000);
 
 /* ---------- Init ---------- */
-applyTheme(); buildPad(); renderCats(); renderRecipes(); fillProfile(); renderSecurity(); renderAll();
-if (!localStorage.getItem(LS_KEY)) { save(); show("profile"); } else show("journal");
-if (!lockData()) openLock("create");
-else if (!sessionStorage.getItem("gt_unlocked")) openLock("unlock");
+try { const ui = JSON.parse(localStorage.getItem(UI_KEY)); if (ui && ui.theme) state.theme = ui.theme; } catch (e) {}
+applyTheme(); renderCats(); renderRecipes(); fillProfile(); renderSecurity(); renderAll(); show("journal");
+(async () => { if (!(await restoreSession())) openAuth(getVault() ? "login" : "create"); })();
 </script>
 </body>
 </html>
