@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#E9E3D8">
 <title>GainsTracker</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="icon" href="icons/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Gains">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <style>
 /* ============================================================
    TOKENS — identité conservée : neutres chauds, terracotta, olive
@@ -74,7 +81,7 @@ button{cursor:pointer}
    ============================================================ */
 .sidebar{position:fixed;z-index:30;top:10px;bottom:10px;left:10px;width:var(--sb);border-radius:var(--r-xl);display:flex;flex-direction:column;padding:14px 10px 10px;overflow:hidden}
 .sb-head{display:flex;align-items:center;gap:10px;padding:2px 8px 16px}
-.app-icon{width:30px;height:30px;border-radius:8px;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;font-weight:700;font-size:14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 2px 6px -1px rgba(180,80,44,.5);flex:0 0 auto}
+.app-icon{width:30px;height:30px;border-radius:8px;background:linear-gradient(180deg,#CE6A40,#A3431F);color:#FFF4E8;display:grid;place-items:center;font-weight:700;font-size:14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 2px 6px -1px rgba(180,80,44,.5);flex:0 0 auto}
 .app-name{font-family:var(--font-d);font-weight:650;font-size:14px;letter-spacing:-.01em}
 .app-sub{font-size:11.5px;color:var(--text-2)}
 .sb-label{font-size:11px;font-weight:600;color:var(--text-3);padding:0 10px 6px;letter-spacing:.02em}
@@ -384,6 +391,7 @@ button.th:hover{color:var(--text)}
 .linkb:hover{color:var(--text)}
 @media (max-width:700px){.metric .row1{flex-direction:column;align-items:flex-start;gap:10px}.metric .ring svg{width:58px;height:58px}.metric .big small{display:block;margin:2px 0 0}}
 
+.app-icon svg{width:64%;height:64%;display:block}
 /* ---- Connexion GitHub & synchro ---- */
 .auth-body{margin:20px 0 4px;display:grid;gap:10px}
 .btn.gh{background:var(--text);border-color:var(--text);color:var(--surface);box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 2px 8px -2px rgba(0,0,0,.35)}
@@ -543,7 +551,7 @@ button.th:hover{color:var(--text)}
 <!-- ============ BARRE LATÉRALE (verre) ============ -->
 <aside class="sidebar glass" aria-label="Navigation principale">
   <div class="sb-head">
-    <div class="app-icon" aria-hidden="true">G</div>
+    <div class="app-icon" aria-hidden="true"><svg viewBox="0 0 512 512" aria-hidden="true"><circle cx="256" cy="256" r="122" fill="none" stroke="currentColor" stroke-opacity=".25" stroke-width="54"/><path d="M262 256 H378 A122 122 0 1 1 342.3 169.7" fill="none" stroke="currentColor" stroke-width="54" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     <div><div class="app-name">GainsTracker</div><div class="app-sub">Prise de masse</div></div>
   </div>
   <div class="sb-label">Suivi</div>
@@ -786,7 +794,7 @@ button.th:hover{color:var(--text)}
 
 <div class="lock" id="auth" role="dialog" aria-modal="true" aria-labelledby="authTitle">
   <div class="lock-card auth-card glass">
-    <div class="app-icon" aria-hidden="true">G</div>
+    <div class="app-icon" aria-hidden="true"><svg viewBox="0 0 512 512" aria-hidden="true"><circle cx="256" cy="256" r="122" fill="none" stroke="currentColor" stroke-opacity=".25" stroke-width="54"/><path d="M262 256 H378 A122 122 0 1 1 342.3 169.7" fill="none" stroke="currentColor" stroke-width="54" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     <h2 id="authTitle">GainsTracker</h2>
     <p id="authMsg" aria-live="polite"></p>
     <div id="authBody" class="auth-body"></div>

@@ -1,0 +1,16 @@
+{
+  "name": "GainsTracker",
+  "short_name": "Gains",
+  "description": "Carnet de prise de masse : recettes simples, générateur de journée, suivi calories et protéines.",
+  "lang": "fr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#E9E3D8",
+  "theme_color": "#B4502C",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
+    { "src": "logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
