@@ -398,6 +398,26 @@ button.th:hover{color:var(--text)}
 .est-items .v{text-align:right;white-space:nowrap;font-size:12.5px}
 .est-items .v b{font-weight:600}
 .est-items .tot{background:var(--surface-2);font-weight:600}
+/* ---- Étapes détaillées & mode cuisine ---- */
+.steps .tip{display:block;font-size:12px;color:var(--text-2);margin-top:4px;line-height:1.4}
+.steps .tip::before{content:"Astuce · ";font-weight:600;color:var(--olive)}
+.steps .step-t{margin-left:6px;vertical-align:1px}
+.steps-head{display:flex;align-items:center;gap:6px;margin:16px 0 6px}
+.steps-head h3{margin:0!important;margin-right:auto!important}
+.steps-head .btn{height:28px;font-size:12.5px;padding:0 10px}
+.cook-prog{height:4px;background:var(--hover);border-radius:2px;overflow:hidden;margin-bottom:14px}
+.cook-prog i{display:block;height:100%;background:var(--accent);transition:width var(--t)}
+.cook-k{font-size:12px;font-weight:600;color:var(--text-2);margin-bottom:8px}
+.cook-step{font-family:var(--font-d);font-size:21px;line-height:1.42;font-weight:500;letter-spacing:-.01em;min-height:110px}
+.cook-tip{margin-top:14px;padding:10px 12px;border-radius:var(--r);background:var(--olive-soft);font-size:13px;line-height:1.45}
+.cook-tip b{color:var(--olive)}
+.timer{display:flex;align-items:center;gap:10px;margin-top:16px;padding:12px 14px;border-radius:var(--r);background:var(--surface-2);transition:background var(--t)}
+.timer b{font-family:var(--font-d);font-size:30px;font-weight:650;letter-spacing:-.02em;font-variant-numeric:tabular-nums;min-width:100px}
+.timer .lbl2{font-size:12px;color:var(--text-2);margin-right:auto}
+.timer.run{background:var(--accent-soft)}
+.timer.done{background:var(--olive-soft)}
+.cook-ing .chk{padding:10px 12px}
+@media (max-width:700px){.cook-step{font-size:19px}}
 /* ---- Coach IA ---- */
 .coach-left{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .coach-left>div{background:var(--surface-2);border-radius:var(--r);padding:10px 12px}
@@ -578,6 +598,9 @@ button.th:hover{color:var(--text)}
   <symbol id="i-coach" viewBox="0 0 24 24"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v9a1.5 1.5 0 0 1-1.5 1.5H10l-4.5 4v-4h0A1.5 1.5 0 0 1 4 14.5z"/><path d="M8.5 9h7M8.5 12h4.5"/></symbol>
   <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-8.6-9A4.6 4.6 0 0 1 12 6.6 4.6 4.6 0 0 1 20.6 11C19 15.6 12 20 12 20z"/></symbol>
   <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6.5 4h11v16l-5.5-4-5.5 4z"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l10-6.5z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></symbol>
+  <symbol id="i-pot" viewBox="0 0 24 24"><path d="M4 10h16v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M2 10h20M9 6.5c0-1.5 1-1.5 1-3M14 6.5c0-1.5 1-1.5 1-3"/></symbol>
   <symbol id="i-chev" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5"/></symbol>
   <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></symbol>
   <symbol id="i-cup" viewBox="0 0 24 24"><path d="M5 9h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5z"/><path d="M16 11h1.5a2 2 0 0 1 0 4H16M9 3v3M12 3v3"/></symbol>
@@ -1230,6 +1253,9 @@ const DEFAULT_PREFS = {
   notes: "Étudiant en Suisse : repas pas chers et très simples, produits de base Migros/Coop. Le matin je mange peu et je suis pressé. Je peux prendre de la whey.",
   feedback: []
 };
+const stepObj = st => typeof st === "string" ? { text: st, minutes: 0, tip: "" } : { text: String((st && st.text) || ""), minutes: Math.max(0, Math.round(+(st && st.minutes) || 0)), tip: String((st && st.tip) || "") };
+const stepsHTML = steps => `<div class="list steps">${steps.map(stepObj).map((x, i) => `<div><span class="n">${i + 1}</span><span><span>${esc(x.text)}</span>${x.minutes ? `<span class="badge plain idle step-t">${ic("clock", "sm")}${x.minutes} min</span>` : ""}${x.tip ? `<span class="tip">${esc(x.tip)}</span>` : ""}</span></div>`).join("")}</div>`;
+const detailedOf = r => (state.details && state.details[r.id]) || null;
 const pct = (a, b) => Math.min(100, Math.max(0, a / b * 100));
 function toast(msg) {
   const t = $("#toast"); $("span", t).textContent = msg; t.classList.add("on");
@@ -1426,13 +1452,14 @@ function openRecipe(id) {
         <div><b class="num">${r.f} g</b><span>lipides</span></div>
       </div>
       <h3>Ingrédients</h3><div class="list">${r.ingredients.map(i => `<div>${esc(i)}</div>`).join("")}</div>
-      <h3>Préparation</h3><div class="list steps">${r.steps.map((s, i) => `<div><span class="n">${i + 1}</span><span>${esc(s)}</span></div>`).join("")}</div>
+      <div class="steps-head"><h3>Préparation</h3>${detailedOf(r) ? `<span class="badge plain ia">Détaillée par l'IA</span>` : (r.steps.some(x => typeof x !== "string") ? "" : `<button class="btn" data-detail="${r.id}">Étapes détaillées (IA)</button>`)}<button class="btn" data-cook="r:${r.id}">${ic("pot", "sm")}Mode cuisine</button></div>
+      ${stepsHTML(detailedOf(r) || r.steps)}
     </div>
     <div class="win-foot">${r.custom ? `<button class="btn" data-uncustom="${r.id}" style="margin-right:auto;color:var(--accent)">Retirer de mes recettes</button>` : ""}<button class="btn" data-close>Fermer</button><button class="btn pri" data-addrcp="${r.id}">${ic("check", "sm")}J'ai mangé ça</button></div>`;
   openModal();
 }
 function openModal() { $("#modal").classList.add("on"); closeCtx(); setTimeout(() => { const b = $("#sheet [data-close]"); b && b.focus({ preventScroll: true }); }, 30); }
-function closeModal() { $("#modal").classList.remove("on"); }
+function closeModal() { $("#modal").classList.remove("on"); if (cook) endCook(); }
 function addRecipe(id) { const r = byId(id); addEntry({ name: r.name, kcal: r.kcal, p: r.p, src: CATS[r.cat].label }); }
 
 /* =====================================================================
@@ -1742,7 +1769,9 @@ async function runCoach(task) {
   out.innerHTML = `<div class="sugs">${[1, 2, 3].map(() => `<div class="sug"><div class="head"><div class="skel" style="width:24px;height:24px"></div><div style="flex:1"><div class="skel" style="width:60%;margin-bottom:6px"></div><div class="skel" style="width:85%;height:9px"></div></div></div><div class="skel" style="width:70px"></div></div>`).join("")}</div>`;
   try {
     if (!canAI) throw Object.assign(new Error("offline"), { local: true });
-    const r = await cloud.coach(task, ctx);
+    const raw = await cloud.coach(task, ctx);
+    const known = new Set(RECIPES.map(x => norm(x.name)));
+    const r = { message: String(raw.message || ""), suggestions: (raw.suggestions || []).slice(0, 4).map(cleanSug).filter(x => x.title && !(task === "ideas" && known.has(norm(x.title)))) };
     if (!r.suggestions.length) throw new Error("vide");
     coachRes[task] = { ...r, mode: "ai" };
   } catch (e) {
@@ -1789,7 +1818,8 @@ function openSuggestion(ref) {
         <div><b class="num">${fmt(x.f)} g</b><span>lipides</span></div>
       </div>
       <h3>Ingrédients</h3><div class="list">${x.ingredients.map(i => `<div>${esc(i)}</div>`).join("")}</div>
-      <h3>Préparation</h3><div class="list steps">${x.steps.map((s, i) => `<div><span class="n">${i + 1}</span><span>${esc(s)}</span></div>`).join("")}</div>
+      <div class="steps-head"><h3>Préparation</h3><button class="btn" data-cook="s:${ref}">${ic("pot", "sm")}Mode cuisine</button></div>
+      ${stepsHTML(x.steps)}
     </div>
     <div class="win-foot">${!x.recipeIds ? `<button class="btn" data-sugkeep="${ref}" style="margin-right:auto">${ic("bookmark", "sm")}Garder dans mes recettes</button>` : ""}<button class="btn" data-close>Fermer</button><button class="btn pri" data-sugeat="${ref}">${ic("check", "sm")}J'ai mangé ça</button></div>`;
   openModal();
@@ -1817,6 +1847,90 @@ function feedback(title, liked, silent) {
   save(); renderPrefs();
   if (!silent) toast(liked ? "Noté : tu aimes ça" : "Noté : le coach évitera ça");
 }
+
+/* ---------- Étapes détaillées par l'IA (mises en cache dans le compte) ---------- */
+async function detailRecipe(id, btn) {
+  const r = byId(id); if (!r) return;
+  if (!(cloud && cloud.detailSteps && cloudUser && navigator.onLine)) { toast(navigator.onLine ? "Connecte-toi pour utiliser l'IA" : "Hors ligne"); return; }
+  btn.disabled = true; btn.innerHTML = `<span class="spin" style="border-color:var(--line-2);border-top-color:var(--accent)"></span>L'IA détaille…`;
+  try {
+    const steps = await cloud.detailSteps(r);
+    if (!state.details) state.details = {};
+    state.details[id] = steps; save();
+    openRecipe(id); toast("Étapes détaillées");
+  } catch (e) {
+    console.warn("Détail IA :", e);
+    toast(aiErrMsg(e)); btn.disabled = false; btn.textContent = "Étapes détaillées (IA)";
+  }
+}
+
+/* ---------- Mode cuisine : une étape à la fois + minuteur ---------- */
+let cook = null, wakeLock = null;
+function openCook(ref) {
+  let title, ingredients, steps;
+  if (ref.startsWith("r:")) { const r = byId(ref.slice(2)); if (!r) return; title = r.name; ingredients = r.ingredients; steps = detailedOf(r) || r.steps; }
+  else { const x = sugOf(ref.slice(2)); if (!x) return; title = x.title; ingredients = x.ingredients; steps = x.steps; }
+  stopCookTimer();
+  cook = { title, ingredients, steps: steps.map(stepObj), i: -1, have: {}, timer: null };
+  try { if (navigator.wakeLock) navigator.wakeLock.request("screen").then(w => wakeLock = w).catch(() => {}); } catch (e) {}
+  renderCook(); openModal();
+}
+function renderCook() {
+  const c = cook, n = c.steps.length, st = c.i >= 0 ? c.steps[c.i] : null;
+  const prog = ((c.i + 1) / (n + 1)) * 100;
+  const tm = c.timer, left = tm ? tm.left : (st ? st.minutes * 60 : 0);
+  const mmss = t => `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`;
+  $("#sheet").innerHTML = `
+    <div class="win-bar">${ic("pot", "sm")}<h2>${esc(c.title)}</h2><div class="end"><button class="ibtn" data-close aria-label="Quitter le mode cuisine">${ic("x")}</button></div></div>
+    <div class="win-body">
+      <div class="cook-prog"><i style="width:${prog}%"></i></div>
+      ${c.i < 0 ? `
+        <div class="cook-k">Avant de commencer · sors tes ingrédients</div>
+        <div class="list cook-ing">${c.ingredients.map((t, k) => `<div class="chk ${c.have[k] ? "on" : ""}" data-cookhave="${k}" role="checkbox" aria-checked="${!!c.have[k]}" tabindex="0"><span class="box">${c.have[k] ? ic("check", "sm") : ""}</span><span class="nm">${esc(t)}</span></div>`).join("")}</div>`
+      : `
+        <div class="cook-k">Étape ${c.i + 1} sur ${n}</div>
+        <div class="cook-step" aria-live="polite">${esc(st.text)}</div>
+        ${st.tip ? `<div class="cook-tip"><b>Astuce · </b>${esc(st.tip)}</div>` : ""}
+        ${st.minutes ? `<div class="timer ${tm && tm.left === 0 ? "done" : tm && tm.run ? "run" : ""}"><b class="num" id="cookClock">${mmss(left)}</b><span class="lbl2">${tm && tm.left === 0 ? "Terminé" : "Minuteur"}</span>
+          <button class="btn" id="cookTimer">${tm && tm.run ? `${ic("pause", "sm")}Pause` : `${ic("play", "sm")}${tm && tm.left < st.minutes * 60 && tm.left > 0 ? "Reprendre" : "Lancer"}`}</button>
+          <button class="ibtn" id="cookReset" data-tip="Remettre à zéro" aria-label="Remettre le minuteur à zéro">${ic("refresh", "sm")}</button></div>` : ""}`}
+    </div>
+    <div class="win-foot">
+      <button class="btn" id="cookPrev" ${c.i < 0 ? "disabled" : ""} style="margin-right:auto">Précédent</button>
+      <button class="btn pri" id="cookNext">${c.i < 0 ? "Commencer" : c.i === n - 1 ? `${ic("check", "sm")}Terminé` : "Étape suivante"}</button>
+    </div>`;
+  $("#cookPrev").onclick = () => cookGo(-1);
+  $("#cookNext").onclick = () => cookGo(1);
+  const tb = $("#cookTimer"); if (tb) tb.onclick = toggleCookTimer;
+  const rb = $("#cookReset"); if (rb) rb.onclick = () => { stopCookTimer(); renderCook(); };
+}
+function cookGo(d) {
+  if (!cook) return;
+  const n = cook.steps.length;
+  if (d > 0 && cook.i === n - 1) { closeModal(); toast("Bon appétit !"); return; }
+  stopCookTimer();
+  cook.i = Math.max(-1, Math.min(n - 1, cook.i + d));
+  renderCook();
+}
+function toggleCookTimer() {
+  const st = cook.steps[cook.i];
+  if (!cook.timer || cook.timer.left === 0) cook.timer = { left: st.minutes * 60, run: false, id: 0 };
+  const tm = cook.timer;
+  if (tm.run) { clearInterval(tm.id); tm.run = false; renderCook(); return; }
+  tm.run = true;
+  tm.id = setInterval(() => {
+    tm.left = Math.max(0, tm.left - 1);
+    const clk = $("#cookClock"); if (clk) clk.textContent = `${Math.floor(tm.left / 60)}:${String(tm.left % 60).padStart(2, "0")}`;
+    if (tm.left === 0) { clearInterval(tm.id); tm.run = false; ding(); toast("Minuteur terminé"); renderCook(); }
+  }, 1000);
+  renderCook();
+}
+function stopCookTimer() { if (cook && cook.timer) { clearInterval(cook.timer.id); cook.timer = null; } }
+function ding() {
+  try { const A = new (window.AudioContext || window.webkitAudioContext)(); [0, .25, .5].forEach(t => { const o = A.createOscillator(), g = A.createGain(); o.frequency.value = 880; o.connect(g); g.connect(A.destination); g.gain.setValueAtTime(.18, A.currentTime + t); g.gain.exponentialRampToValueAtTime(.001, A.currentTime + t + .22); o.start(A.currentTime + t); o.stop(A.currentTime + t + .23); }); } catch (e) {}
+  if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+}
+function endCook() { stopCookTimer(); cook = null; if (wakeLock) { wakeLock.release().catch(() => {}); wakeLock = null; } }
 
 /* ---------- Tes goûts ---------- */
 function renderPrefs() {
@@ -1888,10 +2002,13 @@ function renderAll() { renderStatus(); renderJournal(); renderPlan(); if ($("#co
 
 document.addEventListener("click", e => {
   if (!e.target.closest("#ctx") && !e.target.closest("[data-entrymenu],[data-slotmenu]")) closeCtx();
-  const t = e.target.closest("[data-ctx],[data-v],[data-cat],[data-sort],[data-rcp],[data-addrcp],[data-close],[data-entrymenu],[data-slotmenu],[data-swap],[data-eat],[data-quick],[data-adj],[data-shopdays],[data-shopchk],[data-s],#genBtn,#regenBtn,#shopBtn,#shopCopy,#shopReset,#clearFilters,[data-acct],[data-sug],[data-sugeat],[data-sugkeep],[data-sugfb],[data-prefdel],[data-prefadd],[data-uncustom]");
+  const t = e.target.closest("[data-ctx],[data-v],[data-cat],[data-sort],[data-rcp],[data-addrcp],[data-close],[data-entrymenu],[data-slotmenu],[data-swap],[data-eat],[data-quick],[data-adj],[data-shopdays],[data-shopchk],[data-s],#genBtn,#regenBtn,#shopBtn,#shopCopy,#shopReset,#clearFilters,[data-acct],[data-sug],[data-sugeat],[data-sugkeep],[data-sugfb],[data-prefdel],[data-prefadd],[data-uncustom],[data-cook],[data-detail],[data-cookhave]");
   if (!t) { if (e.target.id === "modal") closeModal(); return; }
   const d = t.dataset;
-  if (d.acct) accountAction(d.acct);
+  if (d.cook) openCook(d.cook);
+  else if (d.detail) detailRecipe(d.detail, t);
+  else if (d.cookhave) { cook.have[d.cookhave] = !cook.have[d.cookhave]; renderCook(); }
+  else if (d.acct) accountAction(d.acct);
   else if (d.sugeat) eatSuggestion(d.sugeat);
   else if (d.sugkeep) keepSuggestion(d.sugkeep);
   else if (d.sugfb) { const [t, i, l] = d.sugfb.split(":"); const x = sugOf(`${t}:${i}`); if (x) { feedback(x.title, l === "1"); renderCoachOut(t); } }
@@ -1947,6 +2064,10 @@ document.addEventListener("click", e => {
 
 document.addEventListener("keydown", e => {
   if ($("#auth").classList.contains("on")) return;
+  if (cook && $("#modal").classList.contains("on") && !e.target.matches("input,textarea")) {
+    if (e.key === "ArrowRight") { e.preventDefault(); cookGo(1); return; }
+    if (e.key === "ArrowLeft") { e.preventDefault(); cookGo(-1); return; }
+  }
   const ctxOn = $("#ctx").classList.contains("on");
   if (e.key === "Escape") { if (ctxOn) closeCtx(); else closeModal(); return; }
   if (ctxOn && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
@@ -2060,7 +2181,8 @@ async function loadCloud() {
     subscribe: (uid, cb, err) => F.onSnapshot(F.doc(db, "users", uid), { includeMetadataChanges: true }, snap => cb(snap.exists() ? snap.data() : null, snap.metadata), err),
     write: (uid, data) => F.setDoc(F.doc(db, "users", uid), { ...data, updatedAt: F.serverTimestamp() }),
     estimateMeal: input => estimateWithGemini(app, base, input),
-    coach: (task, ctx) => coachWithGemini(app, base, task, ctx)
+    coach: (task, ctx) => coachWithGemini(app, base, task, ctx),
+    detailSteps: r => detailWithGemini(app, base, r)
   };
 }
 
@@ -2115,7 +2237,9 @@ Règles :
 - Propose des repas SIMPLES, rapides et pas chers, avec des produits courants de Migros/Coop. Prix en CHF réalistes.
 - Respecte STRICTEMENT ce qu'il n'aime pas. Privilégie ce qu'il aime et ce qu'il mange souvent.
 - Valeurs nutritionnelles réalistes pour les quantités indiquées. Quantités précises dans les ingrédients (ex. « 120 g de pâtes »).
-- 2 à 5 étapes courtes par recette. Tutoiement, phrases courtes, en français.
+- Préparation DÉTAILLÉE pour un débutant : 5 à 10 étapes. Chaque étape (text) = une action précise avec les quantités, le niveau de feu (doux / moyen / vif) ou la température du four, la durée, et un repère visuel pour savoir quand c'est prêt (ex. « jusqu'à ce que le poulet ne soit plus rose au centre »).
+- minutes = temps de cuisson ou d'attente de l'étape (0 s'il n'y en a pas). tip = astuce courte (erreur à éviter, variante, conservation) ou vide.
+- Tutoiement, phrases claires, en français.
 - category : une valeur parmi breakfast, salty, gainer, dessert, snack, whey.
 - message : une phrase d'encouragement concrète et courte (pas de flatterie).`;
 async function coachWithGemini(app, base, task, ctx) {
@@ -2126,7 +2250,7 @@ async function coachWithGemini(app, base, task, ctx) {
     message: S.string(),
     suggestions: S.array({ items: S.object({ properties: {
       title: S.string(), category: S.string(), why: S.string(),
-      ingredients: S.array({ items: S.string() }), steps: S.array({ items: S.string() }),
+      ingredients: S.array({ items: S.string() }), steps: S.array({ items: S.object({ properties: { text: S.string(), minutes: S.number(), tip: S.string() } }) }),
       kcal: S.number(), protein: S.number(), carbs: S.number(), fat: S.number(), minutes: S.number(), price_chf: S.number()
     } }) })
   } });
@@ -2136,7 +2260,30 @@ async function coachWithGemini(app, base, task, ctx) {
       const model = M.getGenerativeModel(aiInst, { model: name, systemInstruction: COACH_PROMPT, generationConfig: { responseMimeType: "application/json", responseSchema: schema, temperature: task === "ideas" ? 0.9 : 0.5 } });
       const res = await model.generateContent(coachPrompt(task, ctx));
       const out = JSON.parse(res.response.text());
-      return { message: String(out.message || ""), suggestions: (out.suggestions || []).slice(0, 4).map(cleanSug).filter(x => x.title) };
+      return { message: String(out.message || ""), suggestions: out.suggestions || [] };
+    } catch (e) {
+      lastErr = e;
+      const t = String((e && e.message) || "").toLowerCase();
+      if (!(t.includes("not found") || t.includes("404") || t.includes("not supported"))) throw e;
+    }
+  }
+  throw lastErr;
+}
+async function detailWithGemini(app, base, r) {
+  if (!aiMod) aiMod = await import(base + "firebase-ai.js");
+  const M = aiMod, S = M.Schema;
+  if (!aiInst) aiInst = M.getAI(app, { backend: new M.GoogleAIBackend() });
+  const schema = S.object({ properties: { steps: S.array({ items: S.object({ properties: { text: S.string(), minutes: S.number(), tip: S.string() } }) }) } });
+  const prompt = [`Recette : ${r.name}`, `Ingrédients : ${r.ingredients.join(" ; ")}`, `Étapes actuelles (trop courtes) : ${r.steps.map(x => stepObj(x).text).join(" / ")}`,
+    `Réécris la préparation en étapes détaillées pour un débutant, en gardant exactement les mêmes ingrédients et quantités.`].join("\n");
+  let lastErr;
+  for (const name of AI_MODELS) {
+    try {
+      const model = M.getGenerativeModel(aiInst, { model: name, systemInstruction: COACH_PROMPT, generationConfig: { responseMimeType: "application/json", responseSchema: schema, temperature: 0.3 } });
+      const out = JSON.parse((await model.generateContent(prompt)).response.text());
+      const steps = (out.steps || []).map(stepObj).filter(x => x.text).slice(0, 12);
+      if (!steps.length) throw new Error("vide");
+      return steps;
     } catch (e) {
       lastErr = e;
       const t = String((e && e.message) || "").toLowerCase();
@@ -2159,10 +2306,12 @@ function coachPrompt(task, c) {
       `Il lui reste ${c.remKcal} kcal et ${c.remProt} g de protéines pour atteindre son objectif.`,
       `Il veut : ${c.effort === "rapide" ? "manger tout de suite sans cuisiner (assemblage, shake, sandwich…)" : "cuisiner quelque chose de simple"}.`,
       c.pantry ? `Il a sous la main : ${c.pantry}. Utilise en priorité ces aliments.` : "",
+      `Tu n'es PAS obligé d'utiliser les recettes de son carnet : invente librement des repas simples avec des produits courants.`,
       `Propose 3 options DIFFÉRENTES. Chaque option, à elle seule, doit couvrir à ±15 % ce qui reste (une option peut regrouper 2-3 prises, ex. « shake maintenant + pâtes ce soir », adapté à l'heure).`,
       `Dans why : explique en une phrase comment ça complète sa journée.`);
   } else {
-    L.push(`Propose 3 nouvelles idées de type « ${CATS[c.type].label} » qu'il aimerait probablement, variées entre elles, autour de ${c.target} kcal par portion, riches en protéines.`,
+    L.push(`INVENTE 3 recettes NOUVELLES de type « ${CATS[c.type].label} » qu'il aimerait probablement : pas des recettes de son carnet ni de simples variantes (changer un seul ingrédient ne compte pas).`,
+      `Varie les styles (mexicain, asiatique, italien, suisse, américain…) tout en restant simple, rapide et pas cher. Environ ${c.target} kcal par portion, riche en protéines.`,
       `Dans why : explique en une phrase pourquoi ça lui correspond (goûts, budget, rapidité).`);
   }
   return L.filter(Boolean).join("\n");
@@ -2170,7 +2319,7 @@ function coachPrompt(task, c) {
 function cleanSug(x) {
   const n = v => Math.max(0, Math.round(+v || 0));
   return { title: String(x.title || "").slice(0, 70), category: CATS[x.category] ? x.category : "salty", why: String(x.why || ""),
-    ingredients: (x.ingredients || []).map(String).slice(0, 12), steps: (x.steps || []).map(String).slice(0, 6),
+    ingredients: (x.ingredients || []).map(String).slice(0, 14), steps: (x.steps || []).map(stepObj).filter(st => st.text).slice(0, 12),
     kcal: n(x.kcal), p: n(x.protein), c: n(x.carbs), f: n(x.fat), time: Math.max(1, n(x.minutes)), price: Math.max(0.1, Math.round((+x.price_chf || 0) * 20) / 20) };
 }
 
