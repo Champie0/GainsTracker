@@ -1216,9 +1216,7 @@ const clone = o => JSON.parse(JSON.stringify(o));
 // Les données vivent dans Firestore (document users/{uid}) : save() programme
 // un envoi groupé ; la synchro temps réel est gérée en section 12.
 let cloud = null, cloudUser = null, saveTimer = 0;
-let localMode = false;
 function save() {
-  if (localMode) { try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) {} return; }
   if (!cloudUser) return;
   clearTimeout(saveTimer); setSync("saving");
   saveTimer = setTimeout(pushState, 500);
@@ -1779,7 +1777,7 @@ async function runCoach(task) {
   } catch (e) {
     if (!e.local) console.warn("Coach IA :", e);
     const r = task === "finish" ? localFinish(ctx) : localIdeas(ctx);
-    coachRes[task] = { ...r, mode: "local", warn: e.local ? (navigator.onLine ? (localMode ? "IA indisponible en mode local : suggestions tirées de ton carnet." : "Connecte-toi pour utiliser l'IA.") : "Hors ligne : suggestions tirées de ton carnet.") : aiErrMsg(e) + " Suggestions tirées de ton carnet à la place." };
+    coachRes[task] = { ...r, mode: "local", warn: e.local ? (navigator.onLine ? "Connecte-toi pour utiliser l'IA." : "Hors ligne : suggestions tirées de ton carnet.") : aiErrMsg(e) + " Suggestions tirées de ton carnet à la place." };
   } finally { btn.disabled = false; btn.innerHTML = label; }
   renderCoachOut(task);
 }
@@ -1853,7 +1851,7 @@ function feedback(title, liked, silent) {
 /* ---------- Étapes détaillées par l'IA (mises en cache dans le compte) ---------- */
 async function detailRecipe(id, btn) {
   const r = byId(id); if (!r) return;
-  if (!(cloud && cloud.detailSteps && cloudUser && navigator.onLine)) { toast(localMode ? "IA indisponible en mode local" : navigator.onLine ? "Connecte-toi pour utiliser l'IA" : "Hors ligne"); return; }
+  if (!(cloud && cloud.detailSteps && cloudUser && navigator.onLine)) { toast(navigator.onLine ? "Connecte-toi pour utiliser l'IA" : "Hors ligne"); return; }
   btn.disabled = true; btn.innerHTML = `<span class="spin" style="border-color:var(--line-2);border-top-color:var(--accent)"></span>L'IA détaille…`;
   try {
     const steps = await cloud.detailSteps(r);
@@ -2144,14 +2142,18 @@ $("#resetAll").onclick = () => { if (confirm("Tout effacer : profil, journal et 
    La config web Firebase n'est pas secrète (elle identifie le projet) :
    la sécurité repose sur l'authentification et les règles serveur.
    ===================================================================== */
-// Vide = mode local (données sur l'appareil, sans connexion, sans synchro ni IA).
-// À remplir avec le firebaseConfig d'un projet créé par un parent (compte majeur),
-// voir README « Réactiver la connexion ».
-const FIREBASE_CONFIG = { apiKey: "", authDomain: "", projectId: "", storageBucket: "", messagingSenderId: "", appId: "" };
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDqrh-yHBOa1gezZcFfdXTZCzCI9ILi2ec",
+  authDomain: "gainstracker-85440.firebaseapp.com",
+  projectId: "gainstracker-85440",
+  storageBucket: "gainstracker-85440.firebasestorage.app",
+  messagingSenderId: "51844895683",
+  appId: "1:51844895683:web:e66a2621fb3716afaa6376"
+};
 const ALLOWED_UIDS = [];
 const FB_V = "12.15.0";
 const AI_MODELS = ["gemini-3.5-flash", "gemini-3.1-flash-lite"];
-const RECAPTCHA_SITE_KEY = "";   // clé publique App Check (reCAPTCHA Enterprise) du futur projet
+const RECAPTCHA_SITE_KEY = "6Ld1HCMuAAAAANvIJ7YUol5R1C25Vcsg6jtDjKp1";   // clé publique App Check (reCAPTCHA Enterprise)   // du plus précis au plus léger (sans facturation)
 const UI_KEY = "gt:ui", LEGACY_VAULT = "gt:v1", LEGACY_KEYS = [LS_KEY, "gainstracker_lock"];
 const AUTO_LOCK_MS = 30 * 60 * 1000;
 let unsub = null, lastPushed = "";
@@ -2162,7 +2164,7 @@ async function loadCloud() {
   const [{ initializeApp }, A, F] = await Promise.all([import(base + "firebase-app.js"), import(base + "firebase-auth.js"), import(base + "firebase-firestore.js")]);
   const app = initializeApp(FIREBASE_CONFIG);
   // App Check : prouve que les appels à l'IA viennent bien de cette app (protège le quota Gemini)
-  if (RECAPTCHA_SITE_KEY) import(base + "firebase-app-check.js").then(AC => AC.initializeAppCheck(app, { provider: new AC.ReCaptchaEnterpriseProvider(RECAPTCHA_SITE_KEY), isTokenAutoRefreshEnabled: true }))
+  import(base + "firebase-app-check.js").then(AC => AC.initializeAppCheck(app, { provider: new AC.ReCaptchaEnterpriseProvider(RECAPTCHA_SITE_KEY), isTokenAutoRefreshEnabled: true }))
     .catch(e => console.warn("App Check :", e));
   const auth = A.getAuth(app);
   let db;
@@ -2389,7 +2391,7 @@ async function signIn() {
 
 /* ---------- Cycle de session ---------- */
 async function startCloud() {
-  if (!FIREBASE_CONFIG.apiKey && !window.__GT_CLOUD__) return startLocal();
+  if (!FIREBASE_CONFIG.apiKey && !window.__GT_CLOUD__) return authView("config");
   authView("loading");
   try { cloud = await loadCloud(); }
   catch (e) { return authView("error", "Impossible de charger la connexion. Vérifie ta connexion internet."); }
@@ -2426,19 +2428,6 @@ function onSignedIn(user) {
     }
   }, err => { if (err && err.code === "permission-denied") authView("denied", user); else setSync("error"); });
 }
-/* Mode local : pas de compte, données dans localStorage de cet appareil */
-function startLocal() {
-  localMode = true;
-  let saved = null; try { saved = JSON.parse(localStorage.getItem(LS_KEY)); } catch (e) {}
-  const first = !(saved && saved.profile);
-  state = first ? { ...clone(DEFAULT_STATE), theme: state.theme } : { ...clone(DEFAULT_STATE), ...saved };
-  state.account = null;
-  $("#lockBtn").hidden = true;
-  $("#estimateBtn").textContent = "Estimer";
-  afterLoad(first);
-  setSync("off");
-  if (first) save();
-}
 function accountOf(u) { return { user: nameOf(u), email: u.email || "", photo: u.photoURL || "", uid: u.uid }; }
 function afterLoad(first) {
   if (!state.shop) state.shop = { days: 1, checked: {} };
@@ -2448,7 +2437,7 @@ function afterLoad(first) {
   if (state.plan && state.plan.some(x => !byId(x.id))) state.plan = null;
   closeAuth(); refreshAll();
   show(first ? "profile" : "journal");
-  toast(first ? "Bienvenue · commence par ton profil" : state.account ? `Bonjour ${state.account.user}` : "Données enregistrées sur cet appareil");
+  toast(first ? "Bienvenue · commence par ton profil" : `Bonjour ${state.account.user}`);
 }
 function refreshAll() { if (!state.prefs) state.prefs = clone(DEFAULT_PREFS); syncCustom(); renderCats(); renderRecipes(); renderCoach(); applyTheme(); fillProfile(); renderSecurity(); renderAll(); $("#pageSub").textContent = PAGES[current][1](); }
 function onSignedOut() {
@@ -2462,12 +2451,7 @@ async function logout() { clearTimeout(saveTimer); await pushState(); if (cloud)
 /* ---------- Profil > Sécurité ---------- */
 function renderSecurity() {
   const a = state.account;
-  if (!a) {
-    $("#secGroup").innerHTML = localMode ? `
-      <div class="set"><div class="lab">Mode local<small>Tes données restent dans ce navigateur, sur cet appareil. Pas de synchro entre appareils.</small></div><div class="ctl"><span class="badge idle">Sans compte</span></div></div>
-      <div class="set"><div class="lab">Connexion, synchro et IA<small>Elles reviendront quand un parent aura créé le projet Firebase avec son compte.</small></div><div class="ctl"><span class="badge plain idle">En attente</span></div></div>` : "";
-    return;
-  }
+  if (!a) { $("#secGroup").innerHTML = ""; return; }
   $("#secGroup").innerHTML = `
     <div class="set"><div class="lab" style="display:flex;align-items:center;gap:10px">${a.photo ? `<img class="avatar" src="${esc(a.photo)}" alt="">` : ""}<span>Compte GitHub<small>${esc(a.user)}${a.email ? " · " + esc(a.email) : ""}</small></span></div><div class="ctl"><span class="badge ok">Connecté</span></div></div>
     <div class="set"><div class="lab">Synchronisation<small>Tes données suivent ton compte sur tous tes appareils</small></div><div class="ctl" id="syncRow"></div></div>
