@@ -2142,6 +2142,9 @@ $("#resetAll").onclick = () => { if (confirm("Tout effacer : profil, journal et 
    La config web Firebase n'est pas secrète (elle identifie le projet) :
    la sécurité repose sur l'authentification et les règles serveur.
    ===================================================================== */
+// Vide = mode local (données sur l'appareil, sans connexion, sans synchro ni IA).
+// À remplir avec le firebaseConfig d'un projet créé par un parent (compte majeur),
+// voir README « Réactiver la connexion ».
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDqrh-yHBOa1gezZcFfdXTZCzCI9ILi2ec",
   authDomain: "gainstracker-85440.firebaseapp.com",
@@ -2153,7 +2156,7 @@ const FIREBASE_CONFIG = {
 const ALLOWED_UIDS = [];
 const FB_V = "12.15.0";
 const AI_MODELS = ["gemini-3.5-flash", "gemini-3.1-flash-lite"];
-const RECAPTCHA_SITE_KEY = "6Ld1HCMuAAAAANvIJ7YUol5R1C25Vcsg6jtDjKp1";   // clé publique App Check (reCAPTCHA Enterprise)   // du plus précis au plus léger (sans facturation)
+const RECAPTCHA_SITE_KEY = "6Ld1HCMuAAAAANvIJ7YUol5R1C25Vcsg6jtDjKp1";   // clé publique App Check (reCAPTCHA Enterprise)
 const UI_KEY = "gt:ui", LEGACY_VAULT = "gt:v1", LEGACY_KEYS = [LS_KEY, "gainstracker_lock"];
 const AUTO_LOCK_MS = 30 * 60 * 1000;
 let unsub = null, lastPushed = "";
