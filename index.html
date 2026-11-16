@@ -2147,11 +2147,18 @@ $("#resetAll").onclick = () => { if (confirm("Tout effacer : profil, journal et 
 // Vide = mode local (données sur l'appareil, sans connexion, sans synchro ni IA).
 // À remplir avec le firebaseConfig d'un projet créé par un parent (compte majeur),
 // voir README « Réactiver la connexion ».
-const FIREBASE_CONFIG = { apiKey: "", authDomain: "", projectId: "", storageBucket: "", messagingSenderId: "", appId: "" };
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDqrh-yHBOa1gezZcFfdXTZCzCI9ILi2ec",
+  authDomain: "gainstracker-85440.firebaseapp.com",
+  projectId: "gainstracker-85440",
+  storageBucket: "gainstracker-85440.firebasestorage.app",
+  messagingSenderId: "51844895683",
+  appId: "1:51844895683:web:e66a2621fb3716afaa6376"
+};
 const ALLOWED_UIDS = [];
 const FB_V = "12.15.0";
 const AI_MODELS = ["gemini-3.5-flash", "gemini-3.1-flash-lite"];
-const RECAPTCHA_SITE_KEY = "";   // clé publique App Check (reCAPTCHA Enterprise) du futur projet
+const RECAPTCHA_SITE_KEY = "6Ld1HCMuAAAAANvIJ7YUol5R1C25Vcsg6jtDjKp1";   // clé publique App Check (reCAPTCHA Enterprise)
 const UI_KEY = "gt:ui", LEGACY_VAULT = "gt:v1", LEGACY_KEYS = [LS_KEY, "gainstracker_lock"];
 const AUTO_LOCK_MS = 30 * 60 * 1000;
 let unsub = null, lastPushed = "";
