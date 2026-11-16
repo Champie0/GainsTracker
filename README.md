@@ -13,9 +13,20 @@ Carnet de prise de masse, en un seul fichier HTML, qui fonctionne hors ligne.
 - **Estimer un repas** : décris ton repas (et/ou ajoute une photo), Gemini estime calories et protéines aliment par aliment.
 - **Coach IA** : propose quoi manger pour finir ta journée (selon ce qu'il te reste, l'heure et ce que tu as sous la main) et de nouvelles idées de repas ; il apprend tes goûts (j'aime / pas pour moi, recettes gardées, aliments fréquents du journal).
 
-## Connexion et données
+## Mode actuel : local
 
-- Connexion avec **« Continuer avec GitHub »** (Firebase Authentication, projet `gainstracker-85440`).
-- Données stockées dans **Cloud Firestore** (région `europe-west6`, Zurich), un document par compte (`users/{uid}`), synchronisées en temps réel entre appareils et disponibles hors ligne.
-- Règles Firestore : un compte ne peut lire et écrire que son propre document ; tout le reste est refusé. L'accès est limité à l'UID du propriétaire.
-- La configuration web Firebase présente dans `index.html` n'est pas un secret : elle identifie le projet, la sécurité repose sur l'authentification et les règles serveur.
+L'app fonctionne **sans compte** : profil, journal, plans et goûts sont enregistrés dans le navigateur de l'appareil (localStorage). Pas de synchronisation entre appareils, et les fonctions IA (estimation, Coach, étapes détaillées) passent par leur repli sans IA.
+
+## Réactiver la connexion, la synchro et l'IA
+
+Le code (connexion GitHub via Firebase Authentication, synchronisation Cloud Firestore, Gemini via Firebase AI Logic avec App Check) est déjà dans `index.html`. Il faut un projet Firebase **créé par un parent, avec son propre compte Google, qui accepte lui-même les conditions** de Firebase et de l'API Gemini. Ensuite :
+
+1. Ajouter une application Web au projet et copier son `firebaseConfig` dans `const FIREBASE_CONFIG`.
+2. Créer Firestore (mode production, `europe-west6`) avec ces règles :
+   ```
+   match /users/{userId} { allow read, write: if request.auth != null && request.auth.uid == userId; }
+   ```
+3. Authentication → GitHub (app OAuth sur le compte Champie0, URL de rappel `https://PROJET.firebaseapp.com/__/auth/handler` ; le client secret est copié par un humain, jamais dans le dépôt) et domaine autorisé `champie0.github.io`.
+4. Pour l'IA : activer Firebase AI Logic (Gemini Developer API), créer une clé reCAPTCHA Enterprise pour `champie0.github.io`, l'enregistrer dans App Check et la copier dans `const RECAPTCHA_SITE_KEY`.
+
+L'ancien projet `gainstracker-85440` n'est plus utilisé par l'app.
