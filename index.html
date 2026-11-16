@@ -1743,7 +1743,8 @@ const FIREBASE_CONFIG = {
 };
 const ALLOWED_UIDS = [];
 const FB_V = "12.15.0";
-const AI_MODELS = ["gemini-3.5-flash", "gemini-3.1-flash-lite"];   // du plus précis au plus léger (sans facturation)
+const AI_MODELS = ["gemini-3.5-flash", "gemini-3.1-flash-lite"];
+const RECAPTCHA_SITE_KEY = "6Ld1HCMuAAAAANvIJ7YUol5R1C25Vcsg6jtDjKp1";   // clé publique App Check (reCAPTCHA Enterprise)   // du plus précis au plus léger (sans facturation)
 const UI_KEY = "gt:ui", LEGACY_VAULT = "gt:v1", LEGACY_KEYS = [LS_KEY, "gainstracker_lock"];
 const AUTO_LOCK_MS = 30 * 60 * 1000;
 let unsub = null, lastPushed = "";
@@ -1753,6 +1754,9 @@ async function loadCloud() {
   const base = `https://www.gstatic.com/firebasejs/${FB_V}/`;
   const [{ initializeApp }, A, F] = await Promise.all([import(base + "firebase-app.js"), import(base + "firebase-auth.js"), import(base + "firebase-firestore.js")]);
   const app = initializeApp(FIREBASE_CONFIG);
+  // App Check : prouve que les appels à l'IA viennent bien de cette app (protège le quota Gemini)
+  import(base + "firebase-app-check.js").then(AC => AC.initializeAppCheck(app, { provider: new AC.ReCaptchaEnterpriseProvider(RECAPTCHA_SITE_KEY), isTokenAutoRefreshEnabled: true }))
+    .catch(e => console.warn("App Check :", e));
   const auth = A.getAuth(app);
   let db;
   try { db = F.initializeFirestore(app, { localCache: F.persistentLocalCache({ tabManager: F.persistentMultipleTabManager() }) }); }
