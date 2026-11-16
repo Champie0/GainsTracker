@@ -10,7 +10,8 @@ Carnet de prise de masse, en un seul fichier HTML, qui fonctionne hors ligne.
 - **Journal** : repas du jour depuis une recette, une photo ou une saisie rapide ; historique des 7 derniers jours.
 - **Ma journée** : génère le plan le moins cher qui atteint tes calories et tes protéines, avec une liste de courses regroupée par rayon.
 - **Recettes** : 42 recettes simples avec des produits de base, prix en CHF (moyennes Migros / Coop).
-- **Photo** : estimation approximative à partir de la description du plat.
+- **Estimer un repas** : décris ton repas (et/ou ajoute une photo), Gemini estime calories et protéines aliment par aliment.
+- **Coach IA** : propose quoi manger pour finir ta journée (selon ce qu'il te reste, l'heure et ce que tu as sous la main) et de nouvelles idées de repas ; il apprend tes goûts (j'aime / pas pour moi, recettes gardées, aliments fréquents du journal).
 
 ## Connexion et données
 

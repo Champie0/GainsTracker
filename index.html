@@ -398,6 +398,36 @@ button.th:hover{color:var(--text)}
 .est-items .v{text-align:right;white-space:nowrap;font-size:12.5px}
 .est-items .v b{font-weight:600}
 .est-items .tot{background:var(--surface-2);font-weight:600}
+/* ---- Coach IA ---- */
+.coach-left{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.coach-left>div{background:var(--surface-2);border-radius:var(--r);padding:10px 12px}
+.coach-left b{display:block;font-family:var(--font-d);font-size:22px;font-weight:650;letter-spacing:-.02em}
+.coach-left span{font-size:12px;color:var(--text-2)}
+.coach-msg{margin:0 14px 12px;padding:10px 12px;border-radius:var(--r);background:var(--olive-soft);font-size:13px;line-height:1.45}
+.sugs{border-top:1px solid var(--line)}
+.sug{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;padding:12px 14px;border-bottom:1px solid var(--line);transition:background var(--t-fast)}
+.sug:last-child{border-bottom:0}
+.sug:hover{background:var(--hover)}
+.sug .head{display:flex;gap:10px;align-items:flex-start;min-width:0;cursor:pointer}
+.sug .name{font-weight:600;line-height:1.3}
+.sug .why{font-size:12.5px;color:var(--text-2);margin-top:2px;line-height:1.4}
+.sug .meta{text-align:right;font-size:12.5px;white-space:nowrap}
+.sug .meta b{font-weight:650}
+.sug .acts{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;padding-left:34px}
+.sug .btn{height:28px;font-size:12.5px;padding:0 10px}
+.sug .btn.on{color:var(--olive);border-color:var(--olive)}
+.sug .btn.off{color:var(--accent);border-color:var(--accent)}
+.pchips{display:flex;flex-wrap:wrap;gap:6px}
+.pchip{display:inline-flex;align-items:center;gap:4px;height:26px;padding:0 4px 0 10px;border-radius:6px;font-size:12.5px;background:var(--olive-soft);color:var(--text)}
+.pchip.no{background:var(--accent-soft)}
+.pchip button{border:0;background:none;width:20px;height:20px;border-radius:4px;display:grid;place-items:center;color:var(--text-2)}
+.pchip button:hover{background:var(--press);color:var(--text)}
+.padd{display:flex;gap:6px}
+.padd .input{height:30px;font-size:13px}
+.learned{font-size:12.5px;color:var(--text-2);line-height:1.5}
+.badge.ia{background:rgba(79,107,102,.15);color:#4F6B66}
+[data-theme="encre"] .badge.ia{color:#8FB3AC}
+@media (max-width:700px){ .sug .acts{padding-left:0} .coach-left b{font-size:19px} .tabbar button{font-size:9.5px} }
 /* ---- Connexion GitHub & synchro ---- */
 .auth-body{margin:20px 0 4px;display:grid;gap:10px}
 .btn.gh{background:var(--text);border-color:var(--text);color:var(--surface);box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 2px 8px -2px rgba(0,0,0,.35)}
@@ -545,6 +575,9 @@ button.th:hover{color:var(--text)}
   <symbol id="i-del" viewBox="0 0 24 24"><path d="M9 5h11v14H9l-6-7z"/><path d="M12.5 9.5l5 5M17.5 9.5l-5 5"/></symbol>
   <symbol id="i-login" viewBox="0 0 24 24"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4M10 16l4-4-4-4M14 12H3"/></symbol>
   <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18.5h10.5a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.6 9.1 4.75 4.75 0 0 0 7 18.5z"/></symbol>
+  <symbol id="i-coach" viewBox="0 0 24 24"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v9a1.5 1.5 0 0 1-1.5 1.5H10l-4.5 4v-4h0A1.5 1.5 0 0 1 4 14.5z"/><path d="M8.5 9h7M8.5 12h4.5"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-8.6-9A4.6 4.6 0 0 1 12 6.6 4.6 4.6 0 0 1 20.6 11C19 15.6 12 20 12 20z"/></symbol>
+  <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6.5 4h11v16l-5.5-4-5.5 4z"/></symbol>
   <symbol id="i-chev" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5"/></symbol>
   <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></symbol>
   <symbol id="i-cup" viewBox="0 0 24 24"><path d="M5 9h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5z"/><path d="M16 11h1.5a2 2 0 0 1 0 4H16M9 3v3M12 3v3"/></symbol>
@@ -565,11 +598,12 @@ button.th:hover{color:var(--text)}
   <nav class="sb-nav" id="nav">
     <button class="nav-item on" data-v="journal" data-tip="Journal" data-tip-pos="right"><span class="tile" style="--c:#B4502C"><svg class="ic"><use href="#i-journal"/></svg></span><span>Journal</span><span class="kbd">1</span></button>
     <button class="nav-item" data-v="plan" data-tip="Ma journée" data-tip-pos="right"><span class="tile" style="--c:#C8892B"><svg class="ic"><use href="#i-day"/></svg></span><span>Ma journée</span><span class="kbd">2</span></button>
-    <button class="nav-item" data-v="recipes" data-tip="Recettes" data-tip-pos="right"><span class="tile" style="--c:#6E7B2F"><svg class="ic"><use href="#i-book"/></svg></span><span>Recettes</span><span class="kbd">3</span></button>
-    <button class="nav-item" data-v="photo" data-tip="Estimer un repas" data-tip-pos="right"><span class="tile" style="--c:#9A5B45"><svg class="ic"><use href="#i-camera"/></svg></span><span>Estimer un repas</span><span class="kbd">4</span></button>
+    <button class="nav-item" data-v="coach" data-tip="Coach IA" data-tip-pos="right"><span class="tile" style="--c:#4F6B66"><svg class="ic"><use href="#i-coach"/></svg></span><span>Coach IA</span><span class="kbd">3</span></button>
+    <button class="nav-item" data-v="recipes" data-tip="Recettes" data-tip-pos="right"><span class="tile" style="--c:#6E7B2F"><svg class="ic"><use href="#i-book"/></svg></span><span>Recettes</span><span class="kbd">4</span></button>
+    <button class="nav-item" data-v="photo" data-tip="Estimer un repas" data-tip-pos="right"><span class="tile" style="--c:#9A5B45"><svg class="ic"><use href="#i-camera"/></svg></span><span>Estimer un repas</span><span class="kbd">5</span></button>
     <div style="height:10px"></div>
     <div class="sb-label">Réglages</div>
-    <button class="nav-item" data-v="profile" data-tip="Profil" data-tip-pos="right"><span class="tile" style="--c:#6B6258"><svg class="ic"><use href="#i-user"/></svg></span><span>Profil & objectifs</span><span class="kbd">5</span></button>
+    <button class="nav-item" data-v="profile" data-tip="Profil" data-tip-pos="right"><span class="tile" style="--c:#6B6258"><svg class="ic"><use href="#i-user"/></svg></span><span>Profil & objectifs</span><span class="kbd">6</span></button>
   </nav>
   <div class="sb-status" id="sbStatus"></div>
   <div class="sb-foot">
@@ -639,6 +673,7 @@ button.th:hover{color:var(--text)}
                 <button class="chip" data-quick="milk">Verre de lait <b>160</b></button>
                 <button class="chip" data-quick="banana">Banane <b>105</b></button>
                 <button class="chip" id="askAI">Décrire à l'IA <b>→</b></button>
+                <button class="chip" id="askFinish">Que manger pour finir&nbsp;? <b>→</b></button>
               </div>
             </div>
           </div>
@@ -746,6 +781,47 @@ button.th:hover{color:var(--text)}
     </section>
 
     <!-- ============ PROFIL ============ -->
+    <section class="view" id="v-coach">
+      <div class="cols">
+        <div class="stack">
+          <div class="surface panel">
+            <div class="panel-head"><h2>Finir ma journée</h2><div class="end" id="finishBadge"></div></div>
+            <div class="panel-body form-grid">
+              <div class="coach-left" id="coachLeft"></div>
+              <div class="field"><span>Maintenant, je peux…</span>
+                <div class="seg" id="effortSeg" role="radiogroup"><button data-e="rapide" class="on" role="radio">Rien cuisiner (rapide)</button><button data-e="cuisiner" role="radio">Cuisiner un peu</button></div>
+              </div>
+              <label class="field"><span>Ce que j'ai sous la main <span class="t3">(facultatif)</span></span><input class="input" id="pantry" placeholder="pâtes, œufs, lait, beurre de cacahuète" autocomplete="off"></label>
+              <button class="btn pri full lg" id="finishBtn">Que manger maintenant&nbsp;?</button>
+            </div>
+            <div id="finishOut"></div>
+          </div>
+          <div class="surface panel">
+            <div class="panel-head"><h2>Nouvelles idées de repas</h2><div class="end" id="ideasBadge"></div></div>
+            <div class="panel-body form-grid">
+              <div class="field"><span>Je cherche…</span>
+                <div class="seg" id="ideaSeg" role="radiogroup"><button data-t="salty" class="on" role="radio">Repas</button><button data-t="breakfast" role="radio">Matin</button><button data-t="snack" role="radio">Collation</button><button data-t="gainer" role="radio">Shake</button></div>
+              </div>
+              <button class="btn full lg" id="ideasBtn">Propose-moi des idées</button>
+            </div>
+            <div id="ideasOut"></div>
+          </div>
+        </div>
+        <div class="stack">
+          <div class="surface panel">
+            <div class="panel-head"><h2>Tes goûts</h2><div class="end"><span class="badge plain idle" id="learnBadge"></span></div></div>
+            <div class="panel-body form-grid" id="prefsBody"></div>
+          </div>
+          <div class="surface panel">
+            <div class="panel-body" style="display:flex;gap:10px;font-size:12.5px;color:var(--text-2)">
+              <svg class="ic sm" style="color:var(--text-3);margin-top:2px"><use href="#i-info"/></svg>
+              <span>Le coach apprend petit à petit : tes « J'aime » / « Pas pour moi », les recettes que tu gardes et ce que tu manges souvent dans ton journal.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="view" id="v-profile">
       <div class="cols">
         <div class="stack">
@@ -800,6 +876,7 @@ button.th:hover{color:var(--text)}
 <nav class="tabbar glass" id="tabbar" aria-label="Navigation">
   <button data-v="journal" class="on"><svg class="ic"><use href="#i-journal"/></svg>Journal</button>
   <button data-v="plan"><svg class="ic"><use href="#i-day"/></svg>Journée</button>
+  <button data-v="coach"><svg class="ic"><use href="#i-coach"/></svg>Coach</button>
   <button data-v="recipes"><svg class="ic"><use href="#i-book"/></svg>Recettes</button>
   <button data-v="photo"><svg class="ic"><use href="#i-camera"/></svg>Estimer</button>
   <button data-v="profile"><svg class="ic"><use href="#i-user"/></svg>Profil</button>
@@ -1109,7 +1186,8 @@ const FOOD_DB = [
 const LS_KEY = "gainstracker_v1";
 const DEFAULT_STATE = {
   profile: { w: 70, h: 178, a: 22, s: "m", act: 1.55, sur: 400, pk: 2.0 },
-  journal: {}, plan: null, shop: { days: 1, checked: {} }, theme: "papier"
+  journal: {}, plan: null, shop: { days: 1, checked: {} }, theme: "papier",
+  prefs: null, custom: []
 };
 const clone = o => JSON.parse(JSON.stringify(o));
 // Les données vivent dans Firestore (document users/{uid}) : save() programme
@@ -1146,6 +1224,12 @@ function ringSVG(rings, size) {
   }).join("") + `</svg>`;
 }
 const ring = (p, color, label = "", size = 66, w = 8) => `<div class="ring">${ringSVG([{ p, color, r: (size - w) / 2, w }], size)}<span class="ctr num">${label}</span></div>`;
+const DEFAULT_PREFS = {
+  likes: ["poulet", "pâtes", "riz", "œufs brouillés / omelette", "beurre de cacahuète", "saumon", "jambon", "fromage"],
+  dislikes: ["poisson (sauf saumon)", "thon", "œufs durs"],
+  notes: "Étudiant en Suisse : repas pas chers et très simples, produits de base Migros/Coop. Le matin je mange peu et je suis pressé. Je peux prendre de la whey.",
+  feedback: []
+};
 const pct = (a, b) => Math.min(100, Math.max(0, a / b * 100));
 function toast(msg) {
   const t = $("#toast"); $("span", t).textContent = msg; t.classList.add("on");
@@ -1174,6 +1258,7 @@ const PAGES = {
   plan:    ["Ma journée", () => state.plan ? `${state.plan.length} repas prévus` : "Aucun plan"],
   recipes: ["Recettes", () => `${RECIPES.length} recettes · prix moyens Migros / Coop`],
   photo:   ["Estimer un repas", () => "Décris ce que tu as mangé, l'IA fait le calcul"],
+  coach:   ["Coach IA", () => "Des idées qui collent à tes goûts et à ce qu'il te reste"],
   profile: ["Profil & objectifs", () => "Calcul de tes besoins"]
 };
 let current = "journal";
@@ -1303,6 +1388,10 @@ function renderCats() {
   $("#catList").innerHTML = all.map(([k, l, i, col]) => `<button class="f-item ${rf.cat === k ? "on" : ""}" data-cat="${k}">${tile(i, col, "sm")}${l}<span class="n">${counts[k]}</span></button>`).join("");
   $("#catSelectM").innerHTML = all.map(([k, l]) => `<option value="${k}" ${rf.cat === k ? "selected" : ""}>${l} (${counts[k]})</option>`).join("");
 }
+function syncCustom() {
+  for (let i = RECIPES.length - 1; i >= 0; i--) if (RECIPES[i].custom) RECIPES.splice(i, 1);
+  (state.custom || []).forEach(r => RECIPES.push({ ...r, custom: true }));
+}
 function renderRecipes() {
   $("#rHead").innerHTML = COLS.map(([k, l, c]) => `<button class="th ${c} ${rf.sort === k ? "on" : ""} ${rf.dir === 1 ? "asc" : ""}" data-sort="${k}">${l}${ic("chev", "sm arr")}</button>`).join("");
   const q = rf.q.trim().toLowerCase();
@@ -1311,7 +1400,7 @@ function renderRecipes() {
     .sort((a, b) => { const x = sortVal[rf.sort](a), y = sortVal[rf.sort](b); return (typeof x === "string" ? x.localeCompare(y, "fr") : x - y) * rf.dir; });
   $("#rcpList").innerHTML = list.length ? list.map(r => `
     <div class="tr" data-rcp="${r.id}" tabindex="0" role="button">
-      <div class="td namecell">${catTile(r.cat, "")}<div><div class="name">${esc(r.name)}</div><div class="sub m-only">${CATS[r.cat].label} · ${r.time} min · ${chf(r.price)} CHF</div></div></div>
+      <div class="td namecell">${catTile(r.cat, "")}<div><div class="name">${esc(r.name)}${r.custom ? ` <span class="badge plain ia" style="margin-left:4px">Ma recette</span>` : ""}</div><div class="sub m-only">${CATS[r.cat].label} · ${r.time} min · ${chf(r.price)} CHF</div></div></div>
       <span class="td cat c-cat">${CATS[r.cat].label}</span>
       <span class="td r c-time t2 num">${r.time} min</span>
       <span class="td r c-price t2 num">${chf(r.price)}</span>
@@ -1339,7 +1428,7 @@ function openRecipe(id) {
       <h3>Ingrédients</h3><div class="list">${r.ingredients.map(i => `<div>${esc(i)}</div>`).join("")}</div>
       <h3>Préparation</h3><div class="list steps">${r.steps.map((s, i) => `<div><span class="n">${i + 1}</span><span>${esc(s)}</span></div>`).join("")}</div>
     </div>
-    <div class="win-foot"><button class="btn" data-close>Fermer</button><button class="btn pri" data-addrcp="${r.id}">${ic("check", "sm")}J'ai mangé ça</button></div>`;
+    <div class="win-foot">${r.custom ? `<button class="btn" data-uncustom="${r.id}" style="margin-right:auto;color:var(--accent)">Retirer de mes recettes</button>` : ""}<button class="btn" data-close>Fermer</button><button class="btn pri" data-addrcp="${r.id}">${ic("check", "sm")}J'ai mangé ça</button></div>`;
   openModal();
 }
 function openModal() { $("#modal").classList.add("on"); closeCtx(); setTimeout(() => { const b = $("#sheet [data-close]"); b && b.focus({ preventScroll: true }); }, 30); }
@@ -1445,9 +1534,14 @@ function shoppingItems(days) {
   const tot = {};
   for (const x of state.plan || []) {
     const r = byId(x.id); if (!r) continue;
-    for (const [k, q] of r.ings) if (k !== "eau") tot[k] = (tot[k] || 0) + (q || 0) * days;
+    for (const [k, q] of r.ings || []) if (k !== "eau") tot[k] = (tot[k] || 0) + (q || 0) * days;
   }
   return tot;
+}
+function shoppingExtras() {
+  const out = [];
+  for (const x of state.plan || []) { const r = byId(x.id); if (r && !r.ings) r.ingredients.forEach(t => out.push(`${t} (${r.name})`)); }
+  return out;
 }
 function fmtQty(it, q) {
   if (it.u === "qs") return "";
@@ -1470,6 +1564,7 @@ function showShopping() {
         .sort((a, b) => a[1].n.localeCompare(b[1].n, "fr"))
         .map(([k, it, q]) => `<div class="chk ${sh.checked[k] ? "on" : ""}" data-shopchk="${k}" role="checkbox" aria-checked="${!!sh.checked[k]}" tabindex="0">
           <span class="box">${sh.checked[k] ? ic("check", "sm") : ""}</span><span class="nm">${esc(it.n)}</span><span class="q num">${fmtQty(it, q)}</span></div>`).join("") + `</div>`).join("")}
+      ${shoppingExtras().length ? `<h3>Mes recettes (quantités pour 1 jour)</h3><div class="list">${shoppingExtras().map(t => `<div>${esc(t)}</div>`).join("")}</div>` : ""}
     </div>
     <div class="win-foot"><button class="btn" id="shopReset" style="margin-right:auto">Tout décocher</button><button class="btn pri" id="shopCopy">${ic("copy", "sm")}Copier la liste</button></div>`;
   openModal();
@@ -1484,6 +1579,8 @@ function shoppingText() {
     lines.push("", RAYONS[r].toUpperCase());
     its.forEach(([k, q]) => lines.push(`- ${ING[k].n}${fmtQty(ING[k], q) ? " : " + fmtQty(ING[k], q) : ""}`));
   }
+  const ex = shoppingExtras();
+  if (ex.length) { lines.push("", "MES RECETTES"); ex.forEach(t => lines.push("- " + t)); }
   return lines.join("\n");
 }
 
@@ -1576,6 +1673,185 @@ function showEstimate(r, mode, warn = "", withPhoto = false) {
 }
 
 /* =====================================================================
+   9 bis. COACH IA — goûts, compléter la journée, idées de repas
+   ===================================================================== */
+let effort = "rapide", ideaType = "salty";
+const coachRes = { finish: null, ideas: null };
+const norm = t => String(t).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").trim();
+
+function frequentFoods(days = 14) {
+  const cnt = {};
+  for (let i = 0; i < days; i++) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    (state.journal[dKey(d)] || []).forEach(e => { if (!/^(shaker whey|verre de lait|banane)/i.test(e.name)) cnt[e.name] = (cnt[e.name] || 0) + 1; });
+  }
+  return Object.entries(cnt).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([n, k]) => k > 1 ? `${n} (×${k})` : n);
+}
+function coachContext(task) {
+  const T = targets(), D = dayTotals(), P = state.prefs || DEFAULT_PREFS;
+  const fb = P.feedback || [];
+  return {
+    goalKcal: T.kcal, goalProt: T.prot, remKcal: Math.max(0, T.kcal - D.kcal), remProt: Math.max(0, T.prot - D.p),
+    time: new Date().toLocaleTimeString("fr-CH", { hour: "2-digit", minute: "2-digit" }),
+    eaten: (state.journal[dKey()] || []).map(e => `${e.name} (${e.kcal} kcal, ${e.p} g)`),
+    likes: P.likes, dislikes: P.dislikes, notes: P.notes, frequent: frequentFoods(),
+    liked: fb.filter(f => f.liked).slice(-10).map(f => f.title), disliked: fb.filter(f => !f.liked).slice(-10).map(f => f.title),
+    known: RECIPES.map(r => r.name).slice(0, 60), effort, pantry: ($("#pantry").value || "").trim(),
+    type: ideaType, target: { breakfast: 450, salty: 800, snack: 450, gainer: 900 }[ideaType] || 700
+  };
+}
+
+/* Repli sans IA : combinaisons de recettes du carnet */
+function avoided(r) { const d = (state.prefs || DEFAULT_PREFS).dislikes.map(norm); const txt = norm(r.name + " " + r.ingredients.join(" ")); return d.some(w => w && txt.includes(w.split(" (")[0])); }
+function localFinish(c) {
+  const pool = RECIPES.filter(r => !avoided(r) && (c.effort !== "rapide" || r.time <= 5));
+  const pantry = c.pantry ? c.pantry.split(/[,;]+/).map(norm).filter(Boolean) : [];
+  const bonus = r => pantry.length ? pantry.filter(w => norm(r.ingredients.join(" ")).includes(w)).length * 60 : 0;
+  const cands = [];
+  for (let i = 0; i < 1500; i++) {
+    const n = c.remKcal > 1300 ? 3 : c.remKcal > 650 ? 2 : 1, pick1 = [];
+    for (let j = 0; j < n; j++) { const r = pick(pool); if (r && !pick1.includes(r)) pick1.push(r); }
+    const k = pick1.reduce((t, r) => t + r.kcal, 0), p = pick1.reduce((t, r) => t + r.p, 0);
+    const sc = Math.abs(k - c.remKcal) + Math.max(0, c.remProt - p) * 12 - pick1.reduce((t, r) => t + bonus(r), 0);
+    cands.push({ sc, rs: pick1, k, p });
+  }
+  cands.sort((a, b) => a.sc - b.sc);
+  const seen = new Set(), out = [];
+  for (const x of cands) {
+    const key = x.rs.map(r => r.id).sort().join("+"); if (seen.has(key)) continue; seen.add(key);
+    out.push({ title: x.rs.map(r => r.name).join(" + "), category: x.rs[0].cat, why: `Couvre ≈ ${fmt(x.k)} kcal et ${x.p} g de protéines sur les ${fmt(c.remKcal)} kcal qui restent.`,
+      ingredients: x.rs.flatMap(r => r.ingredients), steps: x.rs.flatMap(r => r.steps.map(s => x.rs.length > 1 ? `${r.name} : ${s}` : s)),
+      kcal: x.k, p: x.p, c: x.rs.reduce((t, r) => t + r.c, 0), f: x.rs.reduce((t, r) => t + r.f, 0), time: x.rs.reduce((t, r) => t + r.time, 0), price: x.rs.reduce((t, r) => t + r.price, 0), recipeIds: x.rs.map(r => r.id) });
+    if (out.length === 3) break;
+  }
+  return { message: "", suggestions: out };
+}
+function localIdeas(c) {
+  const pool = RECIPES.filter(r => r.cat === c.type && !avoided(r));
+  const out = [];
+  while (out.length < 3 && pool.length) { const r = pool.splice(Math.floor(Math.random() * pool.length), 1)[0]; out.push({ title: r.name, category: r.cat, why: "Recette de ton carnet qui correspond à ce type de repas.", ingredients: r.ingredients, steps: r.steps, kcal: r.kcal, p: r.p, c: r.c, f: r.f, time: r.time, price: r.price, recipeIds: [r.id] }); }
+  return { message: "", suggestions: out };
+}
+
+async function runCoach(task) {
+  const btn = task === "finish" ? $("#finishBtn") : $("#ideasBtn"), out = task === "finish" ? $("#finishOut") : $("#ideasOut");
+  const label = btn.innerHTML, ctx = coachContext(task);
+  if (task === "finish" && ctx.remKcal < 80 && ctx.remProt < 5) { coachRes.finish = { message: "Objectif du jour atteint. Rien à rajouter, bien joué.", suggestions: [], mode: "ai" }; renderCoachOut("finish"); return; }
+  const canAI = cloud && cloud.coach && cloudUser && navigator.onLine;
+  btn.disabled = true; btn.innerHTML = `<span class="spin"${task === "ideas" ? ' style="border-color:var(--line-2);border-top-color:var(--accent)"' : ""}></span>${canAI ? "Le coach réfléchit…" : "Recherche…"}`;
+  out.innerHTML = `<div class="sugs">${[1, 2, 3].map(() => `<div class="sug"><div class="head"><div class="skel" style="width:24px;height:24px"></div><div style="flex:1"><div class="skel" style="width:60%;margin-bottom:6px"></div><div class="skel" style="width:85%;height:9px"></div></div></div><div class="skel" style="width:70px"></div></div>`).join("")}</div>`;
+  try {
+    if (!canAI) throw Object.assign(new Error("offline"), { local: true });
+    const r = await cloud.coach(task, ctx);
+    if (!r.suggestions.length) throw new Error("vide");
+    coachRes[task] = { ...r, mode: "ai" };
+  } catch (e) {
+    if (!e.local) console.warn("Coach IA :", e);
+    const r = task === "finish" ? localFinish(ctx) : localIdeas(ctx);
+    coachRes[task] = { ...r, mode: "local", warn: e.local ? (navigator.onLine ? "Connecte-toi pour utiliser l'IA." : "Hors ligne : suggestions tirées de ton carnet.") : aiErrMsg(e) + " Suggestions tirées de ton carnet à la place." };
+  } finally { btn.disabled = false; btn.innerHTML = label; }
+  renderCoachOut(task);
+}
+function renderCoachOut(task) {
+  const r = coachRes[task], out = task === "finish" ? $("#finishOut") : $("#ideasOut");
+  const badge = task === "finish" ? $("#finishBadge") : $("#ideasBadge");
+  if (!r) { out.innerHTML = ""; badge.innerHTML = ""; return; }
+  badge.innerHTML = r.mode === "ai" ? `<span class="badge ia">IA</span>` : `<span class="badge idle">Sans IA</span>`;
+  const fb = (state.prefs && state.prefs.feedback) || [];
+  const fbOf = t => { const f = fb.filter(x => x.title === t).pop(); return f ? (f.liked ? "on" : "off") : ""; };
+  const kept = t => (state.custom || []).some(x => x.name === t) || RECIPES.some(x => !x.custom && x.name === t && task === "ideas" && r.mode === "local");
+  out.innerHTML = (r.warn ? `<div class="coach-msg" style="background:var(--accent-soft)">${esc(r.warn)}</div>` : "") + (r.message ? `<div class="coach-msg">${esc(r.message)}</div>` : "") +
+    (r.suggestions.length ? `<div class="sugs">${r.suggestions.map((x, i) => `
+      <div class="sug">
+        <div class="head" data-sug="${task}:${i}">${catTile(x.category, "")}<div style="min-width:0"><div class="name">${esc(x.title)}</div><div class="why">${esc(x.why)}</div></div></div>
+        <div class="meta num"><b>${fmt(x.kcal)}</b> kcal<br><span style="color:var(--olive);font-weight:600">${fmt(x.p)} g</span> · ${x.time} min<br><span class="t2">≈ ${chf(x.price)} CHF</span></div>
+        <div class="acts">
+          <button class="btn" data-sug="${task}:${i}">Voir</button>
+          ${task === "finish" ? `<button class="btn pri" data-sugeat="${task}:${i}">${ic("check", "sm")}J'ai mangé ça</button>` : ""}
+          ${!x.recipeIds ? `<button class="btn" data-sugkeep="${task}:${i}" ${kept(x.title) ? "disabled" : ""}>${ic("bookmark", "sm")}${kept(x.title) ? "Gardée" : "Garder"}</button>` : ""}
+          <button class="btn ${fbOf(x.title) === "on" ? "on" : ""}" data-sugfb="${task}:${i}:1">${ic("heart", "sm")}J'aime</button>
+          <button class="btn ${fbOf(x.title) === "off" ? "off" : ""}" data-sugfb="${task}:${i}:0">Pas pour moi</button>
+        </div>
+      </div>`).join("")}</div>` : "");
+}
+const sugOf = ref => { const [t, i] = ref.split(":"); return coachRes[t] && coachRes[t].suggestions[+i]; };
+function openSuggestion(ref) {
+  const x = sugOf(ref); if (!x) return;
+  if (x.recipeIds && x.recipeIds.length === 1) return openRecipe(x.recipeIds[0]);
+  $("#sheet").innerHTML = `
+    <div class="win-bar">${catTile(x.category, "")}<h2>${esc(x.title)}</h2><div class="end"><button class="ibtn" data-close aria-label="Fermer">${ic("x")}</button></div></div>
+    <div class="win-body">
+      <p class="t2" style="font-size:13px;margin-bottom:14px">${esc(x.why)}</p>
+      <div class="facts">
+        <div><b class="num" style="color:var(--accent)">${fmt(x.kcal)}</b><span>kcal</span></div>
+        <div><b class="num" style="color:var(--olive)">${fmt(x.p)} g</b><span>protéines</span></div>
+        <div><b class="num">${fmt(x.c)} g</b><span>glucides</span></div>
+        <div><b class="num">${fmt(x.f)} g</b><span>lipides</span></div>
+      </div>
+      <h3>Ingrédients</h3><div class="list">${x.ingredients.map(i => `<div>${esc(i)}</div>`).join("")}</div>
+      <h3>Préparation</h3><div class="list steps">${x.steps.map((s, i) => `<div><span class="n">${i + 1}</span><span>${esc(s)}</span></div>`).join("")}</div>
+    </div>
+    <div class="win-foot">${!x.recipeIds ? `<button class="btn" data-sugkeep="${ref}" style="margin-right:auto">${ic("bookmark", "sm")}Garder dans mes recettes</button>` : ""}<button class="btn" data-close>Fermer</button><button class="btn pri" data-sugeat="${ref}">${ic("check", "sm")}J'ai mangé ça</button></div>`;
+  openModal();
+}
+function eatSuggestion(ref) {
+  const x = sugOf(ref); if (!x) return;
+  addEntry({ name: x.title, kcal: x.kcal, p: x.p, src: x.recipeIds ? "Coach · recettes" : "Coach IA" });
+  closeModal(); renderCoach();
+}
+function keepSuggestion(ref) {
+  const x = sugOf(ref); if (!x || x.recipeIds) return;
+  if (!state.custom) state.custom = [];
+  if (state.custom.some(r => r.name === x.title)) return;
+  state.custom.push({ id: "c_" + uid(), cat: x.category, name: x.title, emoji: "", time: x.time, kcal: x.kcal, p: x.p, c: x.c, f: x.f, price: x.price, ingredients: x.ingredients, steps: x.steps });
+  feedback(x.title, true, true);
+  syncCustom(); renderCats(); renderRecipes(); save(); closeModal();
+  renderCoachOut(ref.split(":")[0]); renderCoach();
+  toast("Ajoutée à tes recettes");
+}
+function feedback(title, liked, silent) {
+  const P = state.prefs || (state.prefs = clone(DEFAULT_PREFS));
+  P.feedback = (P.feedback || []).filter(f => f.title !== title);
+  P.feedback.push({ title, liked, t: Date.now() });
+  P.feedback = P.feedback.slice(-60);
+  save(); renderPrefs();
+  if (!silent) toast(liked ? "Noté : tu aimes ça" : "Noté : le coach évitera ça");
+}
+
+/* ---------- Tes goûts ---------- */
+function renderPrefs() {
+  const P = state.prefs || DEFAULT_PREFS, fb = P.feedback || [];
+  const chips = (arr, kind) => arr.map((t, i) => `<span class="pchip ${kind === "dislikes" ? "no" : ""}">${esc(t)}<button data-prefdel="${kind}:${i}" aria-label="Retirer ${esc(t)}">${ic("x", "sm")}</button></span>`).join("");
+  const freq = frequentFoods();
+  $("#prefsBody").innerHTML = `
+    <div class="field"><span>J'aime</span><div class="pchips">${chips(P.likes, "likes")}</div>
+      <div class="padd"><input class="input" id="addLike" placeholder="Ajouter (ex. wraps)" autocomplete="off"><button class="btn" data-prefadd="likes">${ic("plus", "sm")}</button></div></div>
+    <div class="field"><span>Je n'aime pas</span><div class="pchips">${chips(P.dislikes, "dislikes")}</div>
+      <div class="padd"><input class="input" id="addDislike" placeholder="Ajouter (ex. champignons)" autocomplete="off"><button class="btn" data-prefadd="dislikes">${ic("plus", "sm")}</button></div></div>
+    <label class="field"><span>À savoir sur moi</span><textarea class="input" id="prefNotes" rows="3">${esc(P.notes || "")}</textarea></label>
+    <div class="learned"><b style="color:var(--text);font-weight:600">Appris automatiquement</b><br>
+      ${freq.length ? `Tu manges souvent : ${esc(freq.slice(0, 5).join(", "))}.` : "Note quelques repas dans ton journal pour que le coach apprenne tes habitudes."}<br>
+      ${fb.length ? `${fb.filter(f => f.liked).length} idée(s) aimée(s), ${fb.filter(f => !f.liked).length} refusée(s), ${(state.custom || []).length} recette(s) gardée(s).` : "Réponds « J'aime » ou « Pas pour moi » aux idées pour affiner."}</div>`;
+  $("#learnBadge").textContent = `${fb.length + freq.length} signaux`;
+  $("#prefNotes").onchange = e => { P.notes = e.target.value.trim(); save(); };
+  [["#addLike", "likes"], ["#addDislike", "dislikes"]].forEach(([sel, kind]) => $(sel).onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); addPref(kind); } });
+}
+function addPref(kind) {
+  const inp = $(kind === "likes" ? "#addLike" : "#addDislike"), v = inp.value.trim();
+  if (!v) return;
+  const P = state.prefs || (state.prefs = clone(DEFAULT_PREFS));
+  if (!P[kind].some(x => norm(x) === norm(v))) P[kind].push(v);
+  const other = kind === "likes" ? "dislikes" : "likes";
+  P[other] = P[other].filter(x => norm(x) !== norm(v));
+  save(); renderPrefs(); setTimeout(() => $(kind === "likes" ? "#addLike" : "#addDislike").focus(), 0);
+}
+function renderCoach() {
+  const T = targets(), D = dayTotals();
+  $("#coachLeft").innerHTML = `<div><span>Il te reste</span><b class="num" style="color:var(--accent)">${fmt(Math.max(0, T.kcal - D.kcal))} kcal</b></div><div><span>et</span><b class="num" style="color:var(--olive)">${fmt(Math.max(0, T.prot - D.p))} g prot.</b></div>`;
+  renderPrefs();
+}
+
+/* =====================================================================
    10. PROFIL
    ===================================================================== */
 let draftSex = "m";
@@ -1608,14 +1884,21 @@ function saveProfile() {
 /* =====================================================================
    11. ÉVÉNEMENTS & RENDU GLOBAL
    ===================================================================== */
-function renderAll() { renderStatus(); renderJournal(); renderPlan(); }
+function renderAll() { renderStatus(); renderJournal(); renderPlan(); if ($("#coachLeft")) renderCoach(); }
 
 document.addEventListener("click", e => {
   if (!e.target.closest("#ctx") && !e.target.closest("[data-entrymenu],[data-slotmenu]")) closeCtx();
-  const t = e.target.closest("[data-ctx],[data-v],[data-cat],[data-sort],[data-rcp],[data-addrcp],[data-close],[data-entrymenu],[data-slotmenu],[data-swap],[data-eat],[data-quick],[data-adj],[data-shopdays],[data-shopchk],[data-s],#genBtn,#regenBtn,#shopBtn,#shopCopy,#shopReset,#clearFilters,[data-acct]");
+  const t = e.target.closest("[data-ctx],[data-v],[data-cat],[data-sort],[data-rcp],[data-addrcp],[data-close],[data-entrymenu],[data-slotmenu],[data-swap],[data-eat],[data-quick],[data-adj],[data-shopdays],[data-shopchk],[data-s],#genBtn,#regenBtn,#shopBtn,#shopCopy,#shopReset,#clearFilters,[data-acct],[data-sug],[data-sugeat],[data-sugkeep],[data-sugfb],[data-prefdel],[data-prefadd],[data-uncustom]");
   if (!t) { if (e.target.id === "modal") closeModal(); return; }
   const d = t.dataset;
   if (d.acct) accountAction(d.acct);
+  else if (d.sugeat) eatSuggestion(d.sugeat);
+  else if (d.sugkeep) keepSuggestion(d.sugkeep);
+  else if (d.sugfb) { const [t, i, l] = d.sugfb.split(":"); const x = sugOf(`${t}:${i}`); if (x) { feedback(x.title, l === "1"); renderCoachOut(t); } }
+  else if (d.sug) openSuggestion(d.sug);
+  else if (d.prefdel) { const [k, i] = d.prefdel.split(":"); state.prefs[k].splice(+i, 1); save(); renderPrefs(); }
+  else if (d.prefadd) addPref(d.prefadd);
+  else if (d.uncustom) { state.custom = (state.custom || []).filter(r => r.id !== d.uncustom); if (state.plan && state.plan.some(x => x.id === d.uncustom)) state.plan = null; syncCustom(); renderCats(); renderRecipes(); renderPlan(); save(); closeModal(); toast("Recette retirée"); }
   else if (d.ctx) { closeCtx(); ctxActions[+d.ctx](); }
   else if (d.v) show(d.v);
   else if (d.cat) { rf.cat = d.cat; renderCats(); renderRecipes(); }
@@ -1675,7 +1958,7 @@ document.addEventListener("keydown", e => {
   if ((e.key === "Enter" || e.key === " ") && e.target.matches(".tr[data-rcp],[data-shopchk]")) { e.preventDefault(); e.target.click(); return; }
   const typing = e.target.matches("input,textarea,select");
   if (!typing && !e.metaKey && !e.ctrlKey && !$("#modal").classList.contains("on")) {
-    const map = { 1: "journal", 2: "plan", 3: "recipes", 4: "photo", 5: "profile" };
+    const map = { 1: "journal", 2: "plan", 3: "coach", 4: "recipes", 5: "photo", 6: "profile" };
     if (map[e.key]) show(map[e.key]);
     if (e.key === "/" && current === "recipes") { e.preventDefault(); $("#rcpSearch").focus(); }
   }
@@ -1708,6 +1991,11 @@ $$("#portionSeg button").forEach(b => b.onclick = () => { $$("#portionSeg button
 $("#estimateBtn").onclick = estimate;
 $("#photoDesc").addEventListener("keydown", e => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) estimate(); });
 $("#askAI").onclick = () => { show("photo"); setTimeout(() => $("#photoDesc").focus(), 80); };
+$("#askFinish").onclick = () => { show("coach"); runCoach("finish"); };
+$("#finishBtn").onclick = () => runCoach("finish");
+$("#ideasBtn").onclick = () => runCoach("ideas");
+$$("#effortSeg button").forEach(b => b.onclick = () => { $$("#effortSeg button").forEach(x => x.classList.toggle("on", x === b)); effort = b.dataset.e; });
+$$("#ideaSeg button").forEach(b => b.onclick = () => { $$("#ideaSeg button").forEach(x => x.classList.toggle("on", x === b)); ideaType = b.dataset.t; });
 $("#estAdd").onclick = () => {
   const k = +$("#estKcal").value, p = +$("#estProt").value;
   if (!(k > 0)) { toast("Calories invalides"); return; }
@@ -1771,7 +2059,8 @@ async function loadCloud() {
     signOut: () => A.signOut(auth),
     subscribe: (uid, cb, err) => F.onSnapshot(F.doc(db, "users", uid), { includeMetadataChanges: true }, snap => cb(snap.exists() ? snap.data() : null, snap.metadata), err),
     write: (uid, data) => F.setDoc(F.doc(db, "users", uid), { ...data, updatedAt: F.serverTimestamp() }),
-    estimateMeal: input => estimateWithGemini(app, base, input)
+    estimateMeal: input => estimateWithGemini(app, base, input),
+    coach: (task, ctx) => coachWithGemini(app, base, task, ctx)
   };
 }
 
@@ -1817,6 +2106,72 @@ async function estimateWithGemini(app, base, { text, image, portion }) {
     }
   }
   throw lastErr;
+}
+
+/* ---------- Coach IA (Gemini) ---------- */
+const COACH_PROMPT = `Tu es le coach nutrition de l'app GainsTracker.
+Ton utilisateur : jeune étudiant en Suisse, en prise de masse, qui a du mal à manger assez.
+Règles :
+- Propose des repas SIMPLES, rapides et pas chers, avec des produits courants de Migros/Coop. Prix en CHF réalistes.
+- Respecte STRICTEMENT ce qu'il n'aime pas. Privilégie ce qu'il aime et ce qu'il mange souvent.
+- Valeurs nutritionnelles réalistes pour les quantités indiquées. Quantités précises dans les ingrédients (ex. « 120 g de pâtes »).
+- 2 à 5 étapes courtes par recette. Tutoiement, phrases courtes, en français.
+- category : une valeur parmi breakfast, salty, gainer, dessert, snack, whey.
+- message : une phrase d'encouragement concrète et courte (pas de flatterie).`;
+async function coachWithGemini(app, base, task, ctx) {
+  if (!aiMod) aiMod = await import(base + "firebase-ai.js");
+  const M = aiMod, S = M.Schema;
+  if (!aiInst) aiInst = M.getAI(app, { backend: new M.GoogleAIBackend() });
+  const schema = S.object({ properties: {
+    message: S.string(),
+    suggestions: S.array({ items: S.object({ properties: {
+      title: S.string(), category: S.string(), why: S.string(),
+      ingredients: S.array({ items: S.string() }), steps: S.array({ items: S.string() }),
+      kcal: S.number(), protein: S.number(), carbs: S.number(), fat: S.number(), minutes: S.number(), price_chf: S.number()
+    } }) })
+  } });
+  let lastErr;
+  for (const name of AI_MODELS) {
+    try {
+      const model = M.getGenerativeModel(aiInst, { model: name, systemInstruction: COACH_PROMPT, generationConfig: { responseMimeType: "application/json", responseSchema: schema, temperature: task === "ideas" ? 0.9 : 0.5 } });
+      const res = await model.generateContent(coachPrompt(task, ctx));
+      const out = JSON.parse(res.response.text());
+      return { message: String(out.message || ""), suggestions: (out.suggestions || []).slice(0, 4).map(cleanSug).filter(x => x.title) };
+    } catch (e) {
+      lastErr = e;
+      const t = String((e && e.message) || "").toLowerCase();
+      if (!(t.includes("not found") || t.includes("404") || t.includes("not supported"))) throw e;
+    }
+  }
+  throw lastErr;
+}
+function coachPrompt(task, c) {
+  const L = [
+    `Objectif du jour : ${c.goalKcal} kcal et ${c.goalProt} g de protéines.`,
+    `Ses goûts — aime : ${c.likes.join(", ") || "—"}. N'aime pas : ${c.dislikes.join(", ") || "—"}.`,
+    `Notes : ${c.notes || "—"}`,
+    `Il mange souvent : ${c.frequent.join(", ") || "—"}.`,
+    `Idées qu'il a aimées : ${c.liked.join(", ") || "—"}. Idées refusées : ${c.disliked.join(", ") || "—"}.`,
+    `Recettes déjà dans son carnet (ne pas reproposer telles quelles) : ${c.known.join(", ")}.`
+  ];
+  if (task === "finish") {
+    L.push(`Il est ${c.time}. Aujourd'hui il a déjà mangé : ${c.eaten.join(" ; ") || "rien"}.`,
+      `Il lui reste ${c.remKcal} kcal et ${c.remProt} g de protéines pour atteindre son objectif.`,
+      `Il veut : ${c.effort === "rapide" ? "manger tout de suite sans cuisiner (assemblage, shake, sandwich…)" : "cuisiner quelque chose de simple"}.`,
+      c.pantry ? `Il a sous la main : ${c.pantry}. Utilise en priorité ces aliments.` : "",
+      `Propose 3 options DIFFÉRENTES. Chaque option, à elle seule, doit couvrir à ±15 % ce qui reste (une option peut regrouper 2-3 prises, ex. « shake maintenant + pâtes ce soir », adapté à l'heure).`,
+      `Dans why : explique en une phrase comment ça complète sa journée.`);
+  } else {
+    L.push(`Propose 3 nouvelles idées de type « ${CATS[c.type].label} » qu'il aimerait probablement, variées entre elles, autour de ${c.target} kcal par portion, riches en protéines.`,
+      `Dans why : explique en une phrase pourquoi ça lui correspond (goûts, budget, rapidité).`);
+  }
+  return L.filter(Boolean).join("\n");
+}
+function cleanSug(x) {
+  const n = v => Math.max(0, Math.round(+v || 0));
+  return { title: String(x.title || "").slice(0, 70), category: CATS[x.category] ? x.category : "salty", why: String(x.why || ""),
+    ingredients: (x.ingredients || []).map(String).slice(0, 12), steps: (x.steps || []).map(String).slice(0, 6),
+    kcal: n(x.kcal), p: n(x.protein), c: n(x.carbs), f: n(x.fat), time: Math.max(1, n(x.minutes)), price: Math.max(0.1, Math.round((+x.price_chf || 0) * 20) / 20) };
 }
 
 /* ---------- Indicateur de synchro ---------- */
@@ -1927,12 +2282,15 @@ function onSignedIn(user) {
 function accountOf(u) { return { user: nameOf(u), email: u.email || "", photo: u.photoURL || "", uid: u.uid }; }
 function afterLoad(first) {
   if (!state.shop) state.shop = { days: 1, checked: {} };
+  if (!state.prefs) state.prefs = clone(DEFAULT_PREFS);
+  if (!state.custom) state.custom = [];
+  syncCustom();
   if (state.plan && state.plan.some(x => !byId(x.id))) state.plan = null;
   closeAuth(); refreshAll();
   show(first ? "profile" : "journal");
   toast(first ? "Bienvenue · commence par ton profil" : `Bonjour ${state.account.user}`);
 }
-function refreshAll() { applyTheme(); fillProfile(); renderSecurity(); renderAll(); $("#pageSub").textContent = PAGES[current][1](); }
+function refreshAll() { if (!state.prefs) state.prefs = clone(DEFAULT_PREFS); syncCustom(); renderCats(); renderRecipes(); renderCoach(); applyTheme(); fillProfile(); renderSecurity(); renderAll(); $("#pageSub").textContent = PAGES[current][1](); }
 function onSignedOut() {
   cloudUser = null; if (unsub) { unsub(); unsub = null; }
   state = { ...clone(DEFAULT_STATE), theme: state.theme };
