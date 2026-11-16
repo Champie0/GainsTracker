@@ -392,6 +392,12 @@ button.th:hover{color:var(--text)}
 @media (max-width:700px){.metric .row1{flex-direction:column;align-items:flex-start;gap:10px}.metric .ring svg{width:58px;height:58px}.metric .big small{display:block;margin:2px 0 0}}
 
 .app-icon svg{width:64%;height:64%;display:block}
+.est-items:empty{display:none}
+.est-items>div{justify-content:space-between}
+.est-items .q{font-size:12px;color:var(--text-2)}
+.est-items .v{text-align:right;white-space:nowrap;font-size:12.5px}
+.est-items .v b{font-weight:600}
+.est-items .tot{background:var(--surface-2);font-weight:600}
 /* ---- Connexion GitHub & synchro ---- */
 .auth-body{margin:20px 0 4px;display:grid;gap:10px}
 .btn.gh{background:var(--text);border-color:var(--text);color:var(--surface);box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 2px 8px -2px rgba(0,0,0,.35)}
@@ -504,6 +510,7 @@ button.th:hover{color:var(--text)}
   .toast{bottom:calc(84px + env(safe-area-inset-bottom))}
   .facts b{font-size:17px}
   .m-only{display:block} .m-inl{display:inline}
+  #v-photo .cols>.viewer{order:2;aspect-ratio:16/9}
 }
 .m-only,.m-inl{display:none}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -559,7 +566,7 @@ button.th:hover{color:var(--text)}
     <button class="nav-item on" data-v="journal" data-tip="Journal" data-tip-pos="right"><span class="tile" style="--c:#B4502C"><svg class="ic"><use href="#i-journal"/></svg></span><span>Journal</span><span class="kbd">1</span></button>
     <button class="nav-item" data-v="plan" data-tip="Ma journée" data-tip-pos="right"><span class="tile" style="--c:#C8892B"><svg class="ic"><use href="#i-day"/></svg></span><span>Ma journée</span><span class="kbd">2</span></button>
     <button class="nav-item" data-v="recipes" data-tip="Recettes" data-tip-pos="right"><span class="tile" style="--c:#6E7B2F"><svg class="ic"><use href="#i-book"/></svg></span><span>Recettes</span><span class="kbd">3</span></button>
-    <button class="nav-item" data-v="photo" data-tip="Photo" data-tip-pos="right"><span class="tile" style="--c:#9A5B45"><svg class="ic"><use href="#i-camera"/></svg></span><span>Estimer une photo</span><span class="kbd">4</span></button>
+    <button class="nav-item" data-v="photo" data-tip="Estimer un repas" data-tip-pos="right"><span class="tile" style="--c:#9A5B45"><svg class="ic"><use href="#i-camera"/></svg></span><span>Estimer un repas</span><span class="kbd">4</span></button>
     <div style="height:10px"></div>
     <div class="sb-label">Réglages</div>
     <button class="nav-item" data-v="profile" data-tip="Profil" data-tip-pos="right"><span class="tile" style="--c:#6B6258"><svg class="ic"><use href="#i-user"/></svg></span><span>Profil & objectifs</span><span class="kbd">5</span></button>
@@ -631,6 +638,7 @@ button.th:hover{color:var(--text)}
                 <button class="chip" data-quick="whey">Shaker whey <b>120</b></button>
                 <button class="chip" data-quick="milk">Verre de lait <b>160</b></button>
                 <button class="chip" data-quick="banana">Banane <b>105</b></button>
+                <button class="chip" id="askAI">Décrire à l'IA <b>→</b></button>
               </div>
             </div>
           </div>
@@ -696,36 +704,41 @@ button.th:hover{color:var(--text)}
           <img id="photoPrev" alt="Photo de ton assiette">
           <label class="drop" id="dropZone" for="photoIn">
             <svg class="ic"><use href="#i-camera"/></svg>
-            <b>Prendre ou choisir une photo</b>
-            <span style="font-size:12.5px">ou glisse une image ici</span>
+            <b>Ajouter une photo</b>
+            <span style="font-size:12.5px">Facultatif · l'IA peut aussi analyser l'image</span>
           </label>
           <label class="btn replace" for="photoIn"><svg class="ic sm"><use href="#i-camera"/></svg>Changer</label>
           <input type="file" id="photoIn" accept="image/*" capture="environment" hidden>
         </div>
         <div class="stack">
           <div class="surface panel">
-            <div class="panel-head"><h2>Description</h2></div>
+            <div class="panel-head"><h2>Ton repas</h2></div>
             <div class="panel-body form-grid">
-              <label class="field"><span>Qu'est-ce qu'il y a dans l'assiette&nbsp;?</span><textarea class="input" id="photoDesc" placeholder="riz, poulet, 2 œufs, sauce"></textarea></label>
+              <label class="field"><span>Qu'est-ce que tu as mangé&nbsp;?</span><textarea class="input" id="photoDesc" rows="3" placeholder="3 œufs brouillés, 2 tranches de pain complet, un steak haché"></textarea></label>
               <div class="field"><span>Portion</span>
                 <div class="seg" id="portionSeg" role="radiogroup">
                   <button data-p="0.7" role="radio">Petite</button><button data-p="1" class="on" role="radio">Normale</button><button data-p="1.35" role="radio">Grosse</button><button data-p="1.7" role="radio">Énorme</button>
                 </div>
               </div>
-              <button class="btn pri full lg" id="estimateBtn">Estimer</button>
+              <button class="btn pri full lg" id="estimateBtn">Estimer avec l'IA</button>
             </div>
           </div>
           <div class="surface panel" id="estimateCard" hidden>
-            <div class="panel-head"><h2>Estimation</h2><div class="end"><span class="badge run">Approximatif</span></div></div>
-            <div class="panel-body form-grid">
-              <div class="note"><svg class="ic sm"><use href="#i-info"/></svg><span>Calcul basé sur ta description et la portion, pas sur l'image. Corrige les valeurs si besoin.</span></div>
-              <div class="t2" style="font-size:12.5px" id="estDetail"></div>
+            <div class="panel-head"><h2>Estimation</h2><div class="end" id="estBadge"></div></div>
+            <div class="panel-body form-grid" id="estBody">
+              <div class="note"><svg class="ic sm"><use href="#i-info"/></svg><span id="estNote"></span></div>
+              <div class="list est-items" id="estItems"></div>
               <div class="quick">
                 <div class="field"><span>Calories</span><div class="stepper"><button data-adj="k" data-d="-50" aria-label="Moins 50 kcal">−</button><input id="estKcal" class="num" type="number" inputmode="numeric" aria-label="Calories"><button data-adj="k" data-d="50" aria-label="Plus 50 kcal">+</button></div></div>
                 <div class="field"><span>Protéines (g)</span><div class="stepper"><button data-adj="p" data-d="-5" aria-label="Moins 5 g">−</button><input id="estProt" class="num" type="number" inputmode="numeric" aria-label="Protéines"><button data-adj="p" data-d="5" aria-label="Plus 5 g">+</button></div></div>
               </div>
               <label class="field"><span>Nom dans le journal</span><input class="input" id="estName"></label>
               <button class="btn pri full lg" id="estAdd"><svg class="ic sm"><use href="#i-check"/></svg>Ajouter au journal</button>
+            </div>
+            <div class="panel-body" id="estLoading" hidden>
+              <div class="skel" style="height:34px;margin-bottom:12px"></div>
+              <div class="skel" style="width:80%;margin-bottom:8px"></div><div class="skel" style="width:65%;margin-bottom:8px"></div><div class="skel" style="width:72%;margin-bottom:16px"></div>
+              <div class="skel" style="height:36px"></div>
             </div>
           </div>
         </div>
@@ -788,7 +801,7 @@ button.th:hover{color:var(--text)}
   <button data-v="journal" class="on"><svg class="ic"><use href="#i-journal"/></svg>Journal</button>
   <button data-v="plan"><svg class="ic"><use href="#i-day"/></svg>Journée</button>
   <button data-v="recipes"><svg class="ic"><use href="#i-book"/></svg>Recettes</button>
-  <button data-v="photo"><svg class="ic"><use href="#i-camera"/></svg>Photo</button>
+  <button data-v="photo"><svg class="ic"><use href="#i-camera"/></svg>Estimer</button>
   <button data-v="profile"><svg class="ic"><use href="#i-user"/></svg>Profil</button>
 </nav>
 
@@ -1160,7 +1173,7 @@ const PAGES = {
   journal: ["Journal", () => new Date().toLocaleDateString("fr-CH", { weekday: "long", day: "numeric", month: "long" })],
   plan:    ["Ma journée", () => state.plan ? `${state.plan.length} repas prévus` : "Aucun plan"],
   recipes: ["Recettes", () => `${RECIPES.length} recettes · prix moyens Migros / Coop`],
-  photo:   ["Estimer une photo", () => "Estimation approximative"],
+  photo:   ["Estimer un repas", () => "Décris ce que tu as mangé, l'IA fait le calcul"],
   profile: ["Profil & objectifs", () => "Calcul de tes besoins"]
 };
 let current = "journal";
@@ -1484,10 +1497,12 @@ function loadPhoto(f) {
   rd.onload = () => { $("#photoPrev").src = rd.result; $("#viewer").classList.add("has"); };
   rd.readAsDataURL(f);
 }
-function estimate() {
-  const desc = ($("#photoDesc").value || "").toLowerCase();
-  if (!desc.trim() && !$("#viewer").classList.contains("has")) { toast("Ajoute une photo ou une description"); return; }
-  let kcal = 0, p = 0, text = desc; const found = [], taken = new Set();
+const PORTION_LBL = { 0.7: "petite", 1: "normale", 1.35: "grosse", 1.7: "énorme" };
+
+/* Repli sans IA : reconnaissance par mots-clés */
+function estimateLocal(raw) {
+  const desc = raw.toLowerCase();
+  let text = desc; const items = [], taken = new Set();
   const db = [...FOOD_DB].sort((a, b) => Math.max(...b.k.map(x => x.length)) - Math.max(...a.k.map(x => x.length)));
   for (const f of db) {
     const kw = f.k.find(w => text.includes(w));
@@ -1495,18 +1510,67 @@ function estimate() {
     taken.add(f.n);
     let qty = 1;
     if (f.perUnit) { const m = text.match(new RegExp("(\\d+)\\s*" + kw.replace(/s$/, ""))); qty = m ? Math.min(12, +m[1]) : 2; }
-    kcal += f.kcal * qty; p += f.p * qty;
-    found.push(qty > 1 ? `${qty}× ${f.n}` : f.n);
+    items.push({ name: f.n, quantity: qty > 1 ? `×${qty}` : "", kcal: Math.round(f.kcal * qty * portion), protein: Math.round(f.p * qty * portion) });
     text = text.split(kw).join(" ");
   }
-  let note;
-  if (!found.length) { kcal = 650; p = 30; note = "Aucun aliment reconnu : valeur d'une assiette moyenne."; }
-  else note = "Reconnu : " + found.join(", ") + ".";
-  $("#estKcal").value = Math.round(kcal * portion / 10) * 10;
-  $("#estProt").value = Math.round(p * portion);
-  const d = desc.trim();
-  $("#estName").value = d ? (d.charAt(0).toUpperCase() + d.slice(1)).slice(0, 60) : "Assiette (photo)";
-  $("#estDetail").textContent = `${note} Portion ×${portion}.`;
+  if (/brouill|omelette|au plat|frit/.test(desc) && !taken.has("Matière grasse (1 c.s.)")) items.push({ name: "Matière grasse de cuisson", quantity: "≈ 1 c.s.", kcal: 100, protein: 0 });
+  const empty = !items.length;
+  return { title: "", items, kcal: empty ? Math.round(650 * portion) : items.reduce((t, i) => t + i.kcal, 0), p: empty ? Math.round(30 * portion) : items.reduce((t, i) => t + i.protein, 0), confidence: "faible", note: empty ? "Aucun aliment reconnu : valeur d'une assiette moyenne." : "" };
+}
+
+/* Photo réduite (1024 px max, JPEG) pour l'envoi à l'IA */
+async function photoForAI() {
+  if (!$("#viewer").classList.contains("has")) return null;
+  const img = $("#photoPrev");
+  try { await img.decode(); } catch (e) {}
+  const sc = Math.min(1, 1024 / Math.max(img.naturalWidth || 1, img.naturalHeight || 1));
+  const c = document.createElement("canvas");
+  c.width = Math.max(1, Math.round(img.naturalWidth * sc)); c.height = Math.max(1, Math.round(img.naturalHeight * sc));
+  c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+  return c.toDataURL("image/jpeg", 0.82).split(",")[1];
+}
+function aiErrMsg(e) {
+  const t = String((e && (e.code || "")) + " " + (e && e.message || "")).toLowerCase();
+  if (t.includes("app-check") || t.includes("appcheck")) return "L'IA est protégée par App Check et n'est pas encore configurée.";
+  if (t.includes("api-not-enabled") || t.includes("has not been used") || t.includes("disabled")) return "L'IA n'est pas encore activée sur le projet Firebase.";
+  if (t.includes("quota") || t.includes("429") || t.includes("resource-exhausted")) return "Limite d'utilisation de l'IA atteinte. Réessaie plus tard.";
+  return "L'IA n'a pas répondu.";
+}
+let estMode = "local";
+async function estimate() {
+  const desc = ($("#photoDesc").value || "").trim(), hasPhoto = $("#viewer").classList.contains("has");
+  if (!desc && !hasPhoto) { toast("Décris ton repas ou ajoute une photo"); $("#photoDesc").focus(); return; }
+  const card = $("#estimateCard"); card.hidden = false;
+  const canAI = cloud && cloud.estimateMeal && cloudUser && navigator.onLine;
+  if (!canAI) { showEstimate(estimateLocal(desc), "local", navigator.onLine ? "" : "Hors ligne : estimation simplifiée sans IA."); return; }
+  const btn = $("#estimateBtn");
+  btn.disabled = true; btn.innerHTML = `<span class="spin"></span>L'IA analyse ton repas…`;
+  $("#estBody").hidden = true; $("#estLoading").hidden = false; $("#estBadge").innerHTML = "";
+  card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  try {
+    const r = await cloud.estimateMeal({ text: desc, image: hasPhoto ? await photoForAI() : null, portion: PORTION_LBL[portion] });
+    showEstimate(r, "ai", "", hasPhoto);
+  } catch (e) {
+    console.warn("IA :", e);
+    showEstimate(estimateLocal(desc), "local", aiErrMsg(e) + " Estimation simplifiée à la place.");
+  } finally {
+    btn.disabled = false; btn.textContent = "Estimer avec l'IA";
+    $("#estBody").hidden = false; $("#estLoading").hidden = true;
+  }
+}
+function showEstimate(r, mode, warn = "", withPhoto = false) {
+  estMode = mode;
+  const conf = { faible: "idle", moyenne: "run", bonne: "ok" }[r.confidence] || "run";
+  $("#estBadge").innerHTML = mode === "ai" ? `<span class="badge ${conf}">IA · confiance ${esc(r.confidence || "moyenne")}</span>` : `<span class="badge idle">Sans IA</span>`;
+  $("#estNote").textContent = (warn ? warn + " " : "") + (mode === "ai"
+    ? `Estimé par l'IA à partir de ta description${withPhoto ? " et de la photo" : ""}. C'est approximatif : corrige si tu sais mieux.${r.note ? " " + r.note : ""}`
+    : `Calcul simplifié par mots-clés.${r.note ? " " + r.note : ""} Corrige les valeurs si besoin.`);
+  $("#estItems").innerHTML = r.items.length ? r.items.map(i => `<div><span>${esc(i.name)}${i.quantity ? ` <span class="q">· ${esc(i.quantity)}</span>` : ""}</span><span class="v num"><b>${fmt(i.kcal)}</b> kcal · ${fmt(i.protein)} g</span></div>`).join("")
+    + `<div class="tot"><span>Total</span><span class="v num"><b>${fmt(r.kcal)}</b> kcal · ${fmt(r.p)} g</span></div>` : "";
+  $("#estKcal").value = Math.round(r.kcal / 10) * 10;
+  $("#estProt").value = Math.round(r.p);
+  const d = $("#photoDesc").value.trim();
+  $("#estName").value = (r.title || (d ? d.charAt(0).toUpperCase() + d.slice(1) : "Repas (photo)")).slice(0, 60);
   $("#estimateCard").hidden = false;
   $("#estimateCard").scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
@@ -1642,10 +1706,12 @@ const vw = $("#viewer");
 vw.addEventListener("drop", e => loadPhoto(e.dataTransfer.files[0]));
 $$("#portionSeg button").forEach(b => b.onclick = () => { $$("#portionSeg button").forEach(x => { x.classList.remove("on"); x.setAttribute("aria-checked", "false"); }); b.classList.add("on"); b.setAttribute("aria-checked", "true"); portion = +b.dataset.p; });
 $("#estimateBtn").onclick = estimate;
+$("#photoDesc").addEventListener("keydown", e => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) estimate(); });
+$("#askAI").onclick = () => { show("photo"); setTimeout(() => $("#photoDesc").focus(), 80); };
 $("#estAdd").onclick = () => {
   const k = +$("#estKcal").value, p = +$("#estProt").value;
   if (!(k > 0)) { toast("Calories invalides"); return; }
-  addEntry({ name: $("#estName").value.trim() || "Assiette (photo)", kcal: k, p: p || 0, src: "Photo · estimation" });
+  addEntry({ name: $("#estName").value.trim() || "Repas", kcal: k, p: p || 0, src: estMode === "ai" ? "Estimation IA" : "Estimation" });
   $("#estimateCard").hidden = true; $("#viewer").classList.remove("has"); $("#photoPrev").removeAttribute("src"); $("#photoIn").value = ""; $("#photoDesc").value = "";
   show("journal");
 };
@@ -1676,7 +1742,8 @@ const FIREBASE_CONFIG = {
   appId: "1:51844895683:web:e66a2621fb3716afaa6376"
 };
 const ALLOWED_UIDS = [];
-const FB_V = "11.0.2";
+const FB_V = "12.15.0";
+const AI_MODELS = ["gemini-3.5-flash", "gemini-3.1-flash-lite"];   // du plus précis au plus léger (sans facturation)
 const UI_KEY = "gt:ui", LEGACY_VAULT = "gt:v1", LEGACY_KEYS = [LS_KEY, "gainstracker_lock"];
 const AUTO_LOCK_MS = 30 * 60 * 1000;
 let unsub = null, lastPushed = "";
@@ -1699,8 +1766,53 @@ async function loadCloud() {
     },
     signOut: () => A.signOut(auth),
     subscribe: (uid, cb, err) => F.onSnapshot(F.doc(db, "users", uid), { includeMetadataChanges: true }, snap => cb(snap.exists() ? snap.data() : null, snap.metadata), err),
-    write: (uid, data) => F.setDoc(F.doc(db, "users", uid), { ...data, updatedAt: F.serverTimestamp() })
+    write: (uid, data) => F.setDoc(F.doc(db, "users", uid), { ...data, updatedAt: F.serverTimestamp() }),
+    estimateMeal: input => estimateWithGemini(app, base, input)
   };
+}
+
+/* ---------- Estimation de repas par Gemini (Firebase AI Logic) ---------- */
+let aiMod = null, aiInst = null;
+const MEAL_PROMPT = `Tu es un nutritionniste. On te décrit un repas (et parfois une photo).
+Estime pour CHAQUE aliment : la quantité probable, les calories, protéines, glucides et lipides.
+Règles :
+- Si la quantité n'est pas précisée, prends une portion standard pour un jeune homme sportif en prise de masse (Suisse).
+- Compte la matière grasse de cuisson quand elle est probable (œufs brouillés : beurre ; poêlée : huile).
+- « un truc de viande » sans précision : suppose une portion de 150 g de viande courante (poulet ou bœuf) et dis-le dans la note.
+- Tiens compte de la taille de portion indiquée.
+- title : nom court du repas en français (max 40 caractères).
+- note : une phrase courte en français sur une hypothèse importante, ou vide.
+- confidence : "faible", "moyenne" ou "bonne".`;
+async function estimateWithGemini(app, base, { text, image, portion }) {
+  if (!aiMod) aiMod = await import(base + "firebase-ai.js");
+  const M = aiMod, S = M.Schema;
+  if (!aiInst) aiInst = M.getAI(app, { backend: new M.GoogleAIBackend() });
+  const schema = S.object({
+    properties: {
+      title: S.string(),
+      items: S.array({ items: S.object({ properties: { name: S.string(), quantity: S.string(), kcal: S.number(), protein: S.number(), carbs: S.number(), fat: S.number() } }) }),
+      confidence: S.string(),
+      note: S.string()
+    }
+  });
+  const parts = [`Repas : ${text || "(voir la photo)"}\nTaille de portion indiquée : ${portion}.`];
+  if (image) parts.push({ inlineData: { mimeType: "image/jpeg", data: image } });
+  let lastErr;
+  for (const name of AI_MODELS) {
+    try {
+      const model = M.getGenerativeModel(aiInst, { model: name, systemInstruction: MEAL_PROMPT, generationConfig: { responseMimeType: "application/json", responseSchema: schema, temperature: 0.2 } });
+      const res = await model.generateContent(parts);
+      const out = JSON.parse(res.response.text());
+      const items = (out.items || []).map(i => ({ name: String(i.name || "?"), quantity: String(i.quantity || ""), kcal: Math.max(0, +i.kcal || 0), protein: Math.max(0, +i.protein || 0) }));
+      return { title: String(out.title || ""), items, kcal: items.reduce((t, i) => t + i.kcal, 0), p: items.reduce((t, i) => t + i.protein, 0),
+               confidence: ["faible", "moyenne", "bonne"].includes(out.confidence) ? out.confidence : "moyenne", note: String(out.note || "") };
+    } catch (e) {
+      lastErr = e;
+      const t = String((e && e.message) || "").toLowerCase();
+      if (!(t.includes("not found") || t.includes("404") || t.includes("not supported"))) throw e;   // seul un modèle indisponible fait passer au suivant
+    }
+  }
+  throw lastErr;
 }
 
 /* ---------- Indicateur de synchro ---------- */
